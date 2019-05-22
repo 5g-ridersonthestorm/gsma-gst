@@ -1,0 +1,38 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "WHERE",
+    "description": "WHERE",
+    "type": "object",
+    "properties": {
+        "LocationScope": {
+            "description": "Scope of location",
+            "type": "string"
+        },
+        "Location": {
+            "description": "Location name",
+            "type": "string"
+        },
+        "Area": {
+            "description": "Polygon of <Lat,Long> coordinates representing the area",
+            "type": "string",
+            "enum": [
+                "NJ",
+                "NY",
+                "CT"
+            ]
+        },
+        "AreaSize(SqKm)": {
+            "description": "Needs to be calculated by some means, e.g. user creates a polygon on the UI to derive result,  enter a set of region/city/suburb names/postcodes and leverage GIS to derive result, etc.",
+            "type": "string"
+        },
+        "ConnectionDensity(Ue/SqKm)": {
+            "description": "Should be validated against max, and disallowed if too high.",
+            "type": "string"
+        },
+        "AvailableCellularFrequencyBands": {
+            "description": "This is informational.  If customer selects a given area, this would scope the frequency bands that are relevant in that area.  This  can be used as a feed-forward filter for device selection, i.e. only show devices that support frequency bands supported in a given area.",
+            "type": "string"
+        }
+    },
+    "required": []
+}

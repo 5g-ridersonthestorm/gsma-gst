@@ -1,0 +1,14 @@
+{
+    "DeterministicCommsSupport": "Yes",
+    "V2XSupport": "No",
+    "DelayTolerance": "-",
+    "SimultaneousSliceOperation": "Same SST",
+    "MissionCriticalSupport": "No",
+    "Reliability": "-",
+    "Availability": "example",
+    "SliceQos": "6",
+    "MmtelSupport": "No",
+    "PositioningSupport": "Yes",
+    "SupportForNon-IpTraffic": "example",
+    "SessionAndServiceContinuity": "example"
+}

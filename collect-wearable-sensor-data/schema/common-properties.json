@@ -1,0 +1,57 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "COMMON PROPERTIES",
+    "description": "COMMON PROPERTIES",
+    "type": "object",
+    "properties": {
+        "DeterministicCommsSupport": {
+            "description": "Are data transfers for this service/slice deterministic/predictable, or not",
+            "type": "string"
+        },
+        "V2XSupport": {
+            "description": "Does this service/slice require V2X communications, or not",
+            "type": "string"
+        },
+        "DelayTolerance": {
+            "description": "Address by 5QI",
+            "type": "string"
+        },
+        "SimultaneousSliceOperation": {
+            "description": "Can the service use shared slicing resources, or not, and if so which type",
+            "type": "string"
+        },
+        "MissionCriticalSupport": {
+            "description": "Does the service require mission critical support, or not",
+            "type": "string"
+        },
+        "Reliability": {
+            "description": "Addressed by 3GPP SA5  for uRLLC, not needed for the others.",
+            "type": "string"
+        },
+        "Availability": {
+            "description": "Addressed by 3GPP SA5  for uRLLC, not needed for the others.",
+            "type": "string"
+        },
+        "SliceQos": {
+            "description": "Addressed by 5QI",
+            "type": "boolean"
+        },
+        "MmtelSupport": {
+            "description": "Indicates whether or not the the service requires MMTel/IMS support",
+            "type": "string"
+        },
+        "PositioningSupport": {
+            "description": "Indicates whether or not the the service requires positioning support",
+            "type": "string"
+        },
+        "SupportForNon-IpTraffic": {
+            "description": "Indicates whether or not provides non-IP (ethernet session and forwarding support) session support of communication devices",
+            "type": "string"
+        },
+        "SessionAndServiceContinuity": {
+            "description": "Indicates which session and service continuity mode is needed",
+            "type": "string"
+        }
+    },
+    "required": []
+}

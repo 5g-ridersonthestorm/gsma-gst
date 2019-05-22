@@ -1,0 +1,22 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "UE POSITIONING PROFILE",
+    "description": "UE POSITIONING PROFILE",
+    "type": "object",
+    "properties": {
+        "Method": {
+            "description": "Positioning method or algorithm",
+            "type": "string",
+            "maxLength": "22"
+        },
+        "Periodicity(Min)": {
+            "description": "Periodicity of the positioning measurement",
+            "type": "string"
+        },
+        "Accuracy(M)": {
+            "description": "Accuracy of the positioning measurement",
+            "type": "string"
+        }
+    },
+    "required": []
+}

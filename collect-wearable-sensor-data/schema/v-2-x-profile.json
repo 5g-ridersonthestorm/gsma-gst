@@ -1,0 +1,18 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "V2X PROFILE",
+    "description": "V2X PROFILE",
+    "type": "object",
+    "properties": {
+        "V2XMode": {
+            "description": "V2X mode",
+            "type": "string",
+            "minItems": "1"
+        },
+        "Synchronicity": {
+            "description": "Actor synchronicity",
+            "type": "string"
+        }
+    },
+    "required": []
+}
