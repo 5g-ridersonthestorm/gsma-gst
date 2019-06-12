@@ -1,0 +1,13 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "9 MOBILITY PROFILE",
+    "description": "9 MOBILITY PROFILE",
+    "type": "object",
+    "properties": {
+        "MaxUeVelocity(Km/H)": {
+            "description": "The maximum speed of a UE whilst connected, or connecting",
+            "type": "string"
+        }
+    },
+    "required": []
+}

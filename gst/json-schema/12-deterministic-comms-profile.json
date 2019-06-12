@@ -1,0 +1,18 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "12 DETERMINISTIC COMMS PROFILE",
+    "description": "12 DETERMINISTIC COMMS PROFILE",
+    "type": "object",
+    "properties": {
+        "Periodicity": {
+            "description": "Periodicity of comms, i.e. how often to expect data transfers",
+            "type": "string",
+            "format": "date-time"
+        },
+        "Dl:UlTrafficRatio": {
+            "description": "Value of 1 means DL and UL traffic volumes are similar.   Note: not specified in GSMA GST today. ",
+            "type": "string"
+        }
+    },
+    "required": []
+}

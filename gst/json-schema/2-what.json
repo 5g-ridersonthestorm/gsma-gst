@@ -1,0 +1,42 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "2-WHAT",
+    "description": "2-WHAT",
+    "type": "object",
+    "properties": {
+        "WhatsDrivingTheConnectivityRequirement?": {
+            "description": "Connectivity requirement in plain text",
+            "type": "string"
+        },
+        "UseCaseType": {
+            "description": "Use case, per NGMN",
+            "type": "string"
+        },
+        "Service/SliceType(Sst)": {
+            "description": "Service/Slice Type",
+            "type": "string",
+            "enum": [
+                "eMBB",
+                "uRLLC",
+                "mMTC"
+            ],
+            "minItems": "1"
+        },
+        "SliceDifferentiator": {
+            "description": "Slice differentiator  ",
+            "type": "string"
+        },
+        "NumberOfTerminals": {
+            "description": "Number of terminals or UEs",
+            "type": "string",
+            "maxLength": "22"
+        },
+        "NumberOfConnections": {
+            "description": "Number of connections.  If not populated,  assumed to be same as number of Ues",
+            "type": "string"
+        }
+    },
+    "required": [
+        "NumberOfTerminals"
+    ]
+}

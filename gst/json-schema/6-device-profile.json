@@ -1,0 +1,22 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "6 DEVICE PROFILE",
+    "description": "6 DEVICE PROFILE",
+    "type": "object",
+    "properties": {
+        "DeviceTypeWhiteList": {
+            "description": "This is informational.    The relevance of asking about devices is: if a customer selects a device (or devices) these implicitly support a given set of frequency bands, and an assessment can be made on whether the underlying network can support the device. ",
+            "type": "string",
+            "minItems": "1"
+        },
+        "FrequencyBandSupport-SupportedAccessTechnologies": {
+            "type": "string"
+        },
+        "MobilitySupport": {
+            "description": "Does this service/slice require mobility, or not",
+            "type": "string",
+            "maxLength": "22"
+        }
+    },
+    "required": []
+}

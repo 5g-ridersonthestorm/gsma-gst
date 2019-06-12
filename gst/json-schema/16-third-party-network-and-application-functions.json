@@ -1,0 +1,13 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "16 Third Party Network and Application Functions",
+    "description": "16 Third Party Network and Application Functions",
+    "type": "object",
+    "properties": {
+        "3rdPartyNetworkAndApplicationFunctions": {
+            "description": "Not addressing in the first phase, realistically won't be automated on Day 0.  Suggest taking concrete example in later phase, starting with EPS/IMS.",
+            "type": "string"
+        }
+    },
+    "required": []
+}

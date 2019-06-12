@@ -1,0 +1,33 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "5 TRAFFIC PROFILE",
+    "description": "5 TRAFFIC PROFILE",
+    "type": "object",
+    "properties": {
+        "ActivityFactor": {
+            "description": "The % of  time that devices are active, i.e. transferring data to/from the network",
+            "type": "string"
+        },
+        "DownlinkUserThroughput(Bps/Ue)": {
+            "description": "Downlink throughput per UE",
+            "type": "string"
+        },
+        "UplinkUserThroughput(Bps/Ue)": {
+            "description": "Uplink throughput per UE",
+            "type": "string"
+        },
+        "E2ELatency(Ms)": {
+            "description": "Latency",
+            "type": "string"
+        },
+        "DownlinkTrafficDensity(Mbps/Ue/SqKm)": {
+            "description": "Downlink traffic density",
+            "type": "string"
+        },
+        "UplinkTrafficDensity(Mbps/Ue/SqKm)": {
+            "description": "Uplink traffic density",
+            "type": "string"
+        }
+    },
+    "required": []
+}
