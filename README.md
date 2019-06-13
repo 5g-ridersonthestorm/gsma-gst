@@ -21,16 +21,6 @@ D:.
 |   LICENSE
 |   README.md
 |   SliceTemplateBlueprint.xlsm
-|   
-+---.idea
-|   |   misc.xml
-|   |   modules.xml
-|   |   sonarIssues.xml
-|   |   vcs.xml
-|   |   workspace.xml
-|   |   
-|   \---inspectionProfiles
-|           Project_Default.xml
 |           
 +---gst
 |   |   generic-slice-template.xlsx
@@ -99,9 +89,98 @@ D:.
 
 ```
 
-## Developing
+## Developing Templates
 
 templates are captured in excel format and then JSON schema and JSON examples are generated
+
+
+###JSON Schema
+JSON Schema describes JSON data. It’s like a database schema for JSON and can be used to validate a JSON instance before it’s sent to an API.
+
+Here is an example schema for a part of generic slice template
+
+```json  
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "WHAT",
+    "description": "WHAT",
+    "type": "object",
+    "properties": {
+        "WhatsDrivingTheConnectivityRequirement?": {
+            "description": "Connectivity requirement in plain text",
+            "type": "string"
+        },
+        "UseCaseType": {
+            "description": "Use case, per NGMN",
+            "type": "string"
+        },
+        "Service/SliceType(Sst)": {
+            "description": "Service/Slice Type",
+            "type": "string",
+            "enum": [
+                "eMBB",
+                "uRLLC",
+                "mMTC"
+            ],
+            "minItems": "1"
+        },
+        "SliceDifferentiator": {
+            "description": "Slice differentiator  ",
+            "type": "string"
+        },
+        "NumberOfTerminals": {
+            "description": "Number of terminals or UEs",
+            "type": "string",
+            "maxLength": "22"
+        },
+        "NumberOfConnections": {
+            "description": "Number of connections.  If not populated,  assumed to be same as number of Ues",
+            "type": "string"
+        }
+    },
+    "required": [
+        "NumberOfTerminals"
+    ]
+}
+```
+
+And here is JSON data that matches that schema.
+```json
+{
+    "WhatsDrivingTheConnectivityRequirement?": "Collect wearable sensor data",
+    "UseCaseType": "Smart wearables ",
+    "Service/SliceType(Sst)": "mIOT",
+    "SliceDifferentiator": "example",
+    "NumberOfTerminals": "200000",
+    "NumberOfConnections": "200000"
+}
+```
+
+
+Let’s go through each property in the schema
+
+type
+type describes the data type such as string, object or number. You can find the whole list here. Each type has its own set of validation keywords that make up the rest of the schema. We’ll describe two validation keywords below.
+
+properties
+properties is validation keyword for JSON objects. This properties object defines each valid property along with an additional level of validation schema. If one of the properties is an object, you can continue to nest that representation as deep as necessary.
+
+required
+The required property is another validation keyword specific to objects. The value of required should be an array of strings, where each string is a key in the properties object. JSON data is not valid against this schema if any of the properties in the required array are missing.
+
+So using the example above, the following JSON data is valid because the title and body are optional
+
+{
+    "NumberOfTerminals": "200000"
+}
+
+And this JSON data is not valid because NumberOfTerminals is required
+
+{
+    "Service/SliceType(Sst)": "eMBB",
+    "SliceDifferentiator": "D143A5"
+}
+Once your API consumers have a JSON schema, they can use one of the many JSON Schema libraries to validate their JSON data.
 
 ### Prerequisites
 
