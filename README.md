@@ -94,7 +94,7 @@ D:.
 templates are captured in excel format and then JSON schema and JSON examples are generated
 
 
-###JSON Schema
+### JSON Schema
 JSON Schema describes JSON data. It’s like a database schema for JSON and can be used to validate a JSON instance before it’s sent to an API.
 
 Here is an example schema for a part of generic slice template
@@ -159,14 +159,17 @@ And here is JSON data that matches that schema.
 
 Let’s go through each property in the schema
 
-type
-type describes the data type such as string, object or number. You can find the whole list here. Each type has its own set of validation keywords that make up the rest of the schema. We’ll describe two validation keywords below.
+_type_
 
-properties
-properties is validation keyword for JSON objects. This properties object defines each valid property along with an additional level of validation schema. If one of the properties is an object, you can continue to nest that representation as deep as necessary.
+The type attribute describes the data type such as string, object or number. You can find the whole list here. Each type has its own set of validation keywords that make up the rest of the schema. We’ll describe two validation keywords below.
 
-required
-The required property is another validation keyword specific to objects. The value of required should be an array of strings, where each string is a key in the properties object. JSON data is not valid against this schema if any of the properties in the required array are missing.
+_properties_
+
+The properties attribute is validation keyword for JSON objects. This properties object defines each valid property along with an additional level of validation schema. If one of the properties is an object, you can continue to nest that representation as deep as necessary.
+
+_required_
+
+The required attribute is another validation keyword specific to objects. The value of required should be an array of strings, where each string is a key in the properties object. JSON data is not valid against this schema if any of the properties in the required array are missing.
 
 So using the example above, the following JSON data is valid because the title and body are optional
 
