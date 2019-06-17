@@ -172,17 +172,18 @@ _required_
 The required attribute is another validation keyword specific to objects. The value of required should be an array of strings, where each string is a key in the properties object. JSON data is not valid against this schema if any of the properties in the required array are missing.
 
 So using the example above, the following JSON data is valid because the title and body are optional
-
+```json
 {
     "NumberOfTerminals": "200000"
 }
-
+```
 And this JSON data is not valid because NumberOfTerminals is required
-
+```json
 {
     "Service/SliceType(Sst)": "eMBB",
     "SliceDifferentiator": "D143A5"
 }
+```
 Once your API consumers have a JSON schema, they can use one of the many JSON Schema libraries to validate their JSON data.
 
 ### Prerequisites
