@@ -27,13 +27,6 @@ D:.
 |   |   
 |   \---json-schema
 |           1-who.json
-|           10-v-2-x-profile.json
-|           11-ue-positioning-profile.json
-|           12-deterministic-comms-profile.json
-|           13-mission-critical-profile.json
-|           14-commercial-profile.json
-|           15-operational-profile.json
-|           16-third-party-network-and-application-functions.json
 |           2-what.json
 |           3-where.json
 |           4-when.json
@@ -42,6 +35,13 @@ D:.
 |           7-common-properties.json
 |           8-data-access-profile.json
 |           9-mobility-profile.json
+|           10-v-2-x-profile.json
+|           11-ue-positioning-profile.json
+|           12-deterministic-comms-profile.json
+|           13-mission-critical-profile.json
+|           14-commercial-profile.json
+|           15-operational-profile.json
+|           16-third-party-network-and-application-functions.json
 |           
 +---p-nest
 |       example-p-nest.yaml
