@@ -14,4 +14,61 @@ imports:
   # The content is a TOSCA encoding of selected SID information model entities as explained in IG1176
     namespace_prefix: sid
 
-#TODO - Everything !
+# This file is built on the **** FALSE ASSUMPTION **** that the change over from fixed connection to a slice is under control of the service provider.
+# Perhaps a better scenario for the catalyst might be to notice that standard calls are being made by multiple CSs and groom those calls onto a slice created on the fly for the purpose?
+# 
+# **** Until a more useful scenario has been agreed you might want to see more complete example of TOSCA used in a telecom environment at https://github.com/pmjordan/TOSCA_for_TMForum/blob/master/TR255C/vFirewall.yml
+
+capability_types:
+  QoS1:
+    description: >-
+      Some mix of speed, latency etc.
+    derived_from: tosca.capabilities.Root
+
+# Define Node Types, one each for fixed and slice
+node_types:
+  fixed_connection:
+    description: connection between two endpoints over a fixed connection
+    derived_from: sid:tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
+    capabilities:
+      # There are always two external interfaces
+      a_end: Endpoint 
+      z-end: Endpoint
+
+  wireless_connection:
+    description: connection between two endpoints over a wireless connection
+    derived_from: sid:tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
+    requirements:
+      # state the resources needed to make the connection over a slice. A slice will need to be created if it doesn't exist
+      - charge_station_control_slice:
+          capability: QoS1
+          node: 5G_slice
+          relationship: DependsOn
+    capabilities:
+      # There are always two external interfaces
+      a_end: Endpoint 
+      z-end: Endpoint
+
+  5G_slice:
+    description: A network capable of supporting multiple point to point connection at a given qos
+    derived_from: sid:tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
+    capabilities:
+      QoSForThisSlice: QoS1
+
+#TODO - will need some operation defined which we can call to switch the data
+
+#TODO - Define a template which uses the fixed node type
+
+#TODO - Get input parameters which will include an identifier for each of CS and CSMS
+
+# Design of the change-over. We could leave it to orchestrator to pick whichever connection resource (fixed or slice) is available (perhaps with some preference) 
+# but doing so would prevent us building in any hysteresis into the change-over procedure.
+# so better to define policy and actions for each possible event
+# The possible events are
+# connection state change to down
+# connection state change to up
+# where connection type (fixed or slice) is relevant
+
+# TODO - Write policy for what to do for the possible events
+# action for fixed down will be create slice then wait for slice up check fixed is still down then switch to use slice
+# action for fixed up is wait, check fixed is still up, then switch to fixed, then kill slice
