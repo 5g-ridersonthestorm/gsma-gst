@@ -1,0 +1,17 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+description: A TOSCA template to implement the connectivity service required between an EV Charging Station and a Charging Station Management System as part of 5G Riders on the Storm 2020 Catalyst for TMForum
+
+metadata:
+  # The following fields are "normative" and expected in TOSCA 
+  template_name: CS to CSMS connectivity
+  template_author: paul.m.jordan@bt.com
+  template_version: '1.0'
+
+imports:
+  # - https://github.com/pmjordan/TOSCA_for_TMForum/blob/master/sid.yml
+  # would normally refer to external repository but for now make it local
+  - file: ../../../../TOSCA_for_TMForum/sid.yml
+  # The content is a TOSCA encoding of selected SID information model entities as explained in IG1176
+    namespace_prefix: sid
+
+#TODO - Everything !
