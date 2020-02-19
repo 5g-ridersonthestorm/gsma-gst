@@ -5,7 +5,7 @@ metadata:
   # The following fields are "normative" and expected in TOSCA 
   template_name: CS to CSMS connectivity
   template_author: paul.m.jordan@bt.com
-  template_version: '1.0'
+  template_version: '2.0'
 
 imports:
   # - https://github.com/pmjordan/TOSCA_for_TMForum/blob/master/sid.yml
@@ -14,10 +14,7 @@ imports:
   # The content is a TOSCA encoding of selected SID information model entities as explained in IG1176
     namespace_prefix: sid
 
-# This file is built on the **** FALSE ASSUMPTION **** that the change over from fixed connection to a slice is under control of the service provider.
-# Perhaps a better scenario for the catalyst might be to notice that standard calls are being made by multiple CSs and groom those calls onto a slice created on the fly for the purpose?
-# 
-# **** Until a more useful scenario has been agreed you might want to see more complete example of TOSCA used in a telecom environment at https://github.com/pmjordan/TOSCA_for_TMForum/blob/master/TR255C/vFirewall.yml
+# This file is built on the that the change over from fixed connection to a slice is under control of the service provider.
 
 capability_types:
   QoS1:
@@ -27,6 +24,10 @@ capability_types:
 
 # Define Node Types, one each for fixed and slice
 node_types:
+  CS_CSMS_connection:
+    description: assured connection using combination of fixed and wireless
+    derived_from: # resource function
+
   fixed_connection:
     description: connection between two endpoints over a fixed connection
     derived_from: sid:tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
@@ -40,7 +41,8 @@ node_types:
     derived_from: sid:tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
     requirements:
       # state the resources needed to make the connection over a slice. A slice will need to be created if it doesn't exist
-      - charge_station_control_slice:
+      # Note that here we don't mind if the slice is standard or dedicated
+      - slice:
           capability: QoS1
           node: 5G_slice
           relationship: DependsOn
@@ -50,25 +52,46 @@ node_types:
       z-end: Endpoint
 
   5G_slice:
-    description: A network capable of supporting multiple point to point connection at a given qos
+    description: An abstract class for a network capable of supporting multiple point to point connection at a given qos
     derived_from: sid:tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
     capabilities:
       QoSForThisSlice: QoS1
 
-#TODO - will need some operation defined which we can call to switch the data
+  standard_5G_slice:
+    description: A concrete class for a general purpose slice
+    derived_from: 5G_slice
+      
+  dedicated_5G_slice:
+    description: A oncrete class for a slice dedicated to Charging station to charge station management connections in areas which are under imminent threat of a weather event
+    derived_from: 5G_slice
+    capabilities:
+      # TODO some extra capabilities or QoS refinements
 
-#TODO - Define a template which uses the fixed node type
+topology_template:
 
-#TODO - Get input parameters which will include an identifier for each of CS and CSMS
+my_CS_CSMS_connection:
+  type: CS_CSMS_connection
 
-# Design of the change-over. We could leave it to orchestrator to pick whichever connection resource (fixed or slice) is available (perhaps with some preference) 
-# but doing so would prevent us building in any hysteresis into the change-over procedure.
-# so better to define policy and actions for each possible event
-# The possible events are
-# connection state change to down
-# connection state change to up
-# where connection type (fixed or slice) is relevant
+  workflow:
+    connection_request:
+      # TODO create a fixed connection
+      # TODO if fixed connection status is failed then invoke fixed failure workflow
+    connection_cease:
+      # TODO if wireless connection exists then destroy it
+      # TODO destroy fixed connection
+    fixed_connection_failure:
+      # TODO if CS is on the list
+        # TODO if dedicated slice does not exist create it
+      # TODO create wireless connection
+    fixed_connection_restoration:
+      # TODO if wireless connection exists then cease it
+      # TODO destroy fixed connection
 
-# TODO - Write policy for what to do for the possible events
-# action for fixed down will be create slice then wait for slice up check fixed is still down then switch to use slice
-# action for fixed up is wait, check fixed is still up, then switch to fixed, then kill slice
+  policy:
+    fixed_connection_failure_event:
+      # TODO run workflow for fixed_connection_failure
+    fixed_connection_restoration_event:
+      # TODO wait ab bit and check fixed connection is still restored
+      # TODO run workflow for fixed_connection_restoration
+
+
