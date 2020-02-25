@@ -14,84 +14,172 @@ imports:
   # The content is a TOSCA encoding of selected SID information model entities as explained in IG1176
     namespace_prefix: sid
 
-# This file is built on the that the change over from fixed connection to a slice is under control of the service provider.
+# This file is built on the following assumptions:
+# the change over from fixed connection to a slice is under control of the service provider.
+# one slice is used for all wireless connections
+# wireless connections are created when EITHER:
+#   a) the fixed fails
+#   b) the CS is included in the CS list
+# connections are destroyed when BOTH:
+#   1) the fixed connection is working
+#   2) the CS is not on the list
 
-capability_types:
-  QoS1:
-    description: >-
-      Some mix of speed, latency etc.
-    derived_from: tosca.capabilities.Root
+data_types:
+  sliceQoSType:
+    derived_from: string
+    constraints:
+      - equal: [embb,urllc,mmtc]
+
+# capability_types:
+# # define the different capabilities a slice may have
+#   sliceQoSType:
+#     description: >-
+#       The slice type name given to some mix of speed, latency etc. 
+#     derived_from: tosca.capabilities.Root
+
+#   sliceQoSType_embb:
+#     description: enhanced Mobile Broadband (eMBB) provides higher speeds for applications such as web browsing, streaming and video conferencing
+#     derived_from: sliceQoSType
+
+#   sliceQoSType_urllc:
+#     description: Ultra-reliable and Low-latency communications (URLLC) enables mission-critical applications, industrial automation, new medical applications, and autonomous driving that require very short network traversal time; and
+#     derived_from: sliceQoSType
+  
+#   sliceQoSType_mmtc:
+#     description: massive Machine Type Communications (mMTC) extends LTE (Long Term Evolution) IoT (Internet of Things) capabilities to support a huge number of devices with enhanced coverage and long battery life.
+#     derived_from: sliceQoSType
 
 # Define Node Types, one each for fixed and slice
 node_types:
   CS_CSMS_connection:
     description: assured connection using combination of fixed and wireless
-    derived_from: # resource function
+    derived_from: sid:nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction
+    capabilities:
+      # There are always two external interfaces
+      a_end: Endpoint 
+      z-end: Endpoint      
+
 
   fixed_connection:
     description: connection between two endpoints over a fixed connection
-    derived_from: sid:tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
+    derived_from: sid:nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction
     capabilities:
-      # There are always two external interfaces
+      # There are always two interfaces
       a_end: Endpoint 
       z-end: Endpoint
 
   wireless_connection:
     description: connection between two endpoints over a wireless connection
-    derived_from: sid:tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
+    derived_from: sid:nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction
     requirements:
       # state the resources needed to make the connection over a slice. A slice will need to be created if it doesn't exist
-      # Note that here we don't mind if the slice is standard or dedicated
       - slice:
-          capability: QoS1
+          # we only want to specify node type but syntax demands capability as well
+          capability: tosca.capabilities.Node
           node: 5G_slice
           relationship: DependsOn
+          # There can only be one and only one slice for all my wireless connections
+          occurrences: [ 1, 1 ]
     capabilities:
-      # There are always two external interfaces
+      # There are always two interfaces
       a_end: Endpoint 
       z-end: Endpoint
 
   5G_slice:
     description: An abstract class for a network capable of supporting multiple point to point connection at a given qos
-    derived_from: sid:tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
-    capabilities:
-      QoSForThisSlice: QoS1
+    derived_from: sid:nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
+    properties:
+      sliceQoSType: 
+        type: string
+        required: false
 
-  standard_5G_slice:
-    description: A concrete class for a general purpose slice
-    derived_from: 5G_slice
-      
-  dedicated_5G_slice:
-    description: A oncrete class for a slice dedicated to Charging station to charge station management connections in areas which are under imminent threat of a weather event
-    derived_from: 5G_slice
-    capabilities:
-      # TODO some extra capabilities or QoS refinements
+  # 5G_embb_slice:
+  #   description: A concrete class for a slice dedicated to Charging station to charge station management connections in areas which are under imminent threat of a weather event
+  #   derived_from: 5G_slice
+  #   properties:
+  #     QosType: 
+  #       constraints:
+  #         - equal: embb
+  #   capabilities:
+  #     SliceQoSType: sliceQoSType_embb
+  #     # TODO some extra capabilities or QoS refinements
+
+policy_types:
+  tosca.policies.Placement.Colocate:
+  # This type is used in TOSCA spec examples but not defined. Using string type is imprecise.
+    derived_from: tosca.policies.Placement
+    properties:
+      affinity:
+        type: string
+    targets:
+      - 5G_slice
+
 
 topology_template:
 
-my_CS_CSMS_connection:
-  type: CS_CSMS_connection
+  node_templates:
+    my_CS_CSMS_connection:
+      type: CS_CSMS_connection
+      # Every CS-CSMS connection requires an instance of a fixed connection
+      requirements:
+        - dependency: my_fixed_connection
 
-  workflow:
-    connection_request:
-      # TODO create a fixed connection
+    my_fixed_connection:
+      type: fixed_connection
+
+    my_wireless_connection:
+      type: wireless_connection
+      requirements:
+        - slice: my_slice
+            # the commented out syntax is uses the target node_filter method; not the abstract node template method
+            # node_filter:
+            #   properties:
+            #     sliceQoSType:
+            #       - { equal: embb }
+
+    my_slice:
+      type: 5G_slice
+      # this uses the abstract node temple method
+      # Abstract node template (placeholder) to be selected by provider
+      directives: [ select ]
+      # all nodes of type wireless_connection require a slice but I want a slice with embb qos
+      node_filter:
+        properties:
+          sliceQoSType:
+            - { equal: embb }
+
+  policies:
+    #fixed_connection_failure_event:
+      # TODO run workflow for fixed_connection_failure
+    #fixed_connection_restoration_event:
+      # TODO wait a bit and check fixed connection is still restored
+      # TODO run workflow for fixed_connection_restoration
+    #cs_list_received:
+      # TODO for workflow for cs_list_received
+    wireless_connection_affinity:
+      # make all wireless connections use the same slice
+      type: tosca.policies.Placement.Colocate
+      description: Keep associated nodes (groups of nodes) based upon Slice
+      properties:
+        affinity: 5G_slice
+
+
+  #workflows:
+    #connection_request:
       # TODO if fixed connection status is failed then invoke fixed failure workflow
-    connection_cease:
+    #connection_cease:
       # TODO if wireless connection exists then destroy it
       # TODO destroy fixed connection
-    fixed_connection_failure:
-      # TODO if CS is on the list
+    #fixed_connection_failure:
         # TODO if dedicated slice does not exist create it
       # TODO create wireless connection
-    fixed_connection_restoration:
-      # TODO if wireless connection exists then cease it
-      # TODO destroy fixed connection
-
-  policy:
-    fixed_connection_failure_event:
-      # TODO run workflow for fixed_connection_failure
-    fixed_connection_restoration_event:
-      # TODO wait ab bit and check fixed connection is still restored
-      # TODO run workflow for fixed_connection_restoration
+    #fixed_connection_restoration:
+      # TODO if wireless connection exists AND CS not on list then invoke wireless_connection_cease
+    #cs_list_received:
+      # TODO for each CS added to list create wireless connection
+      # TODO for each CS removed from the list if fixed connection is working then invoke wireless_connection_cease
+    #wireless_connection_cease:
+      # TODO cease wireless connection
+      # TODO if slice exists AND there are no connections on it then destroy it
 
 
