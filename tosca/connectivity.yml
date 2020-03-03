@@ -49,7 +49,7 @@ data_types:
 #     description: massive Machine Type Communications (mMTC) extends LTE (Long Term Evolution) IoT (Internet of Things) capabilities to support a huge number of devices with enhanced coverage and long battery life.
 #     derived_from: sliceQoSType
 
-# Define Node Types, one each for fixed and slice
+# Define Node Types, one each for fixed and slice and one which covers both
 node_types:
   CS_CSMS_connection:
     description: assured connection using combination of fixed and wireless
@@ -106,14 +106,13 @@ node_types:
 
 policy_types:
   tosca.policies.Placement.Colocate:
-  # This type is used in TOSCA spec examples but not defined. Using string type is imprecise.
+  # This type is used in TOSCA spec examples but not defined. Using string type is imprecise but that's the example.
     derived_from: tosca.policies.Placement
     properties:
       affinity:
         type: string
     targets:
       - 5G_slice
-
 
 topology_template:
 
