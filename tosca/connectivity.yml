@@ -154,8 +154,10 @@ topology_template:
     #fixed_connection_restoration_event:
       # TODO wait a bit and check fixed connection is still restored
       # TODO run workflow for fixed_connection_restoration
-    #cs_list_received:
-      # TODO for workflow for cs_list_received
+    #fixed_connection_at_risk:
+      # TODO run workflow for connection_failover
+    #fixed_connection_not_at_risk
+      # TODO run workflow for connection_failforward
     wireless_connection_affinity:
       # make all wireless connections use the same slice
       type: tosca.policies.Placement.Colocate
@@ -166,18 +168,23 @@ topology_template:
 
   #workflows:
     #connection_request:
+      # TODO make sure wireless status is disabled to override default orchestrator functionality which will create all listed node types
       # TODO if fixed connection status is failed then invoke fixed failure workflow
     #connection_cease:
       # TODO if wireless connection exists then destroy it
       # TODO destroy fixed connection
     #fixed_connection_failure:
-        # TODO if dedicated slice does not exist create it
       # TODO create wireless connection
     #fixed_connection_restoration:
-      # TODO if wireless connection exists AND CS not on list then invoke wireless_connection_cease
-    #cs_list_received:
-      # TODO for each CS added to list create wireless connection
-      # TODO for each CS removed from the list if fixed connection is working then invoke wireless_connection_cease
+      # TODO if wireless connection exists AND fixed not at risk then invoke wireless_connection_cease
+    #connection_failover
+      # TODO create wireless connection
+      # TODO make fixed status disabled
+    #connection_failforward
+      # TODO make fixed status enabled
+      # TODO cease wireless connection
+    #connection_modify_special_remove
+      # TODO if fixed connection is working then invoke wireless_connection_cease
     #wireless_connection_cease:
       # TODO cease wireless connection
       # TODO if slice exists AND there are no connections on it then destroy it
