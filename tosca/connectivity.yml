@@ -19,10 +19,12 @@ imports:
 # one slice is used for all wireless connections
 # wireless connections are created when EITHER:
 #   a) the fixed fails
-#   b) the CS is included in the CS list
-# connections are destroyed when BOTH:
+#   b) the CS is deemed to be at risk
+# wireless connections are destroyed when BOTH:
 #   1) the fixed connection is working
-#   2) the CS is not on the list
+#   2) the CS is no longer at risk
+# Orders for a connection come from higher layer BSS
+# A CS becoming at risk is a network event
 
 data_types:
   sliceQoSType:
