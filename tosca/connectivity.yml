@@ -49,13 +49,24 @@ capability_types:
     derived_from: sliceType
 
 interface_types:
-  wireless_management:
-    description: This interface is used to control the admin state of a wireless connection
-    notifications:
-      wireless_up_request:
-        description: This notification is received when the CS uses its SIM to request a connection over 5G
-        implementation: name_of_command_or_script_which_orchestrator_uses_to_subscribe_to_this_notification 
-        # The action taken is defined in a policy with the same name
+  5G_slice_management:
+    description: This interface is used to control the resources allocated to a slice
+    inputs:
+      # TODO this is a list but I now remember the input was going to be just a count
+      affected_connections:
+        type: list 
+        description: A list of zero one or more CS_CSMS_connection identified by the value of their wireless_connection_id which we know is defined as an integer
+        required: true
+        default: null
+        entry_schema:
+          type: integer
+
+    operations:
+      # TODO add resource for the listed connections
+      # The simple way is just to call some named executable like this
+      add_resource: executable_which_adds_resource
+      # but TODO is something which uses a expression on a count of affected connection to set value of resource_size
+
 
 # Define Node Types, one each for fixed and slice
 node_types:
@@ -80,6 +91,10 @@ node_types:
   wireless_connection:
     description: connection between two endpoints over a wireless connection
     derived_from: sid:nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction
+    attributes:
+      # We need these connections to have a unique ID, assume that it is auto-generated on creation
+      wireless_connection_id:
+        type: integer
     requirements:
       # state the resources needed to make the connection over a slice. A slice will need to be created if it doesn't exist
       - slice:
@@ -100,9 +115,12 @@ node_types:
       sliceQoSType: 
         type: string
         required: false
+      resource_size:
+        type: integer
+        default: 1
     interfaces:
-      5G_slice_management:
-        type: wireless_management
+      5G_slice_management_interface:
+        type: 5G_slice_management
 
   5G_embb_slice:
     description: A concrete class for a slice for enhanced Mobile Broadband
@@ -111,7 +129,10 @@ node_types:
       sliceQoSType: 
         constraints:
           - equal: embb
-      # TODO some extra properties to reflect the content of GST
+      # TODO some extra properties to reflect the content of GST, here is an example
+      resource_size:
+        type: integer
+        default: 1
     capabilities:
       SliceType: sliceType_embb
       
@@ -156,20 +177,9 @@ topology_template:
       directives: [ select ]
 
   policies:
-    # TOSCA 1.3 section 3.9.2.6.1 defines polices within a topology template as a list of policy definitions but as a workaround to puccini issue #30 they are defined here as a map 
-    #connection_at_risk:
-      # TODO run workflow for add_resource
-    #connection_not_at_risk
-      # TODO run workflow for remove_resource
     wireless_connection_affinity:
       # make all wireless connections use the same slice
       type: tosca.policies.Placement.Colocate
       description: Keep all instances of my_wireless_connection on one instance of cs_csms_slice
       properties:
         affinity: cs_csms_slice
-
-#  workflows:
-      #add_resource
-        # TODO
-      #remove_resource
-        # TODO
