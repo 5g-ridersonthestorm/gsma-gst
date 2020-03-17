@@ -21,7 +21,7 @@ imports:
 # One slice is used for all wireless connections
 # The slice will be allocated additional resources by the CSP in anticipation of a storm or other at-risk event
 # The additional resources are provided only for some sub-set of the charging stations
-# The sub-set of affected charing stations may change over time
+# The sub-set of affected charging stations may change over time
 
 data_types:
   sliceQoSType:
@@ -49,14 +49,13 @@ capability_types:
     derived_from: sliceType
 
 interface_types:
-  wireless_state_management:
+  wireless_management:
     description: This interface is used to control the admin state of a wireless connection
     notifications:
       wireless_up_request:
         description: This notification is received when the CS uses its SIM to request a connection over 5G
         implementation: name_of_command_or_script_which_orchestrator_uses_to_subscribe_to_this_notification 
         # The action taken is defined in a policy with the same name
-
 
 # Define Node Types, one each for fixed and slice
 node_types:
@@ -92,9 +91,7 @@ node_types:
       # There are always two interfaces
       a_end: Endpoint 
       z-end: Endpoint
-    interfaces:
-      wireless_connection_state_management:
-        type: wireless_state_management
+
 
   5G_slice:
     description: An abstract class for a network capable of supporting multiple point to point connection at a given qos
@@ -103,6 +100,9 @@ node_types:
       sliceQoSType: 
         type: string
         required: false
+    interfaces:
+      5G_slice_management:
+        type: wireless_management
 
   5G_embb_slice:
     description: A concrete class for a slice for enhanced Mobile Broadband
@@ -157,27 +157,6 @@ topology_template:
 
   policies:
     # TOSCA 1.3 section 3.9.2.6.1 defines polices within a topology template as a list of policy definitions but as a workaround to puccini issue #30 they are defined here as a map 
-    wireless_connection_event_handler:
-      # due to puccini issue #29 can't define and hence use tosca.policies.wireless_up_request so have to use a generic policy type
-      #type: tosca.policies.wireless_up_request
-      type: tosca.policies.Root
-      description: Policy to define what workflow to run when a wireless_up_request notification is received
-      # This policy only applies to wireless connections so say so by defining the targets. Not strictly necessary here as the notification is defined in a interface which is only used on wireless connections
-      # But can't do so due as there is no targets clause in our parent while we have the workaround to puccini issue #30
-      # targets
-        # - my_wireless_connection
-      # puccini does not yet support triggers so have to comment them out until issue #29 fixed
-      # triggers:
-      #   wireless_up_request_trigger:
-      #     event: wireless_up_request
-      #     action:
-      #       # Can't use set_state and the node type is not derived from tosca.nodes
-      #       - delegate: wireless_connection_activate
-      #       # but there is less indirection if we say that the action sets the state directly like this
-      #       - set_state: 
-      # TODO run workflow wireless_connection_provide
-    #wireless_connection_clear
-      # TODO run wireless_connection_cease
     #connection_at_risk:
       # TODO run workflow for add_resource
     #connection_not_at_risk
@@ -189,19 +168,8 @@ topology_template:
       properties:
         affinity: cs_csms_slice
 
-  workflows:
-    wireless_connection_activate:
-      description: Change the admin state of a wireless connection which has already been created
-      steps:
-        target: my_wireless_connection
-        # TODO create wireless connection
-      #wireless_connection_cease:
-        # TODO cease wireless connection
-        # TODO if slice exists AND there are no connections on it then destroy it
+#  workflows:
       #add_resource
         # TODO
       #remove_resource
         # TODO
-
-
-
