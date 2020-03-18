@@ -60,7 +60,6 @@ interface_types:
         default: null
         entry_schema:
           type: integer
-
     operations:
       # TODO add resource for the listed connections
       # The simple way is just to call some named executable like this
@@ -80,7 +79,6 @@ node_types:
 
 
   fixed_connection:
-    # TODO define lifecycle so that it gets created straight away
     description: connection between two endpoints over a fixed connection
     derived_from: sid:nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction
     capabilities:
@@ -132,7 +130,7 @@ node_types:
       # TODO some extra properties to reflect the content of GST, here is an example
       resource_size:
         type: integer
-        default: 1
+        default: 10
     capabilities:
       SliceType: sliceType_embb
       
@@ -155,6 +153,7 @@ topology_template:
       # Every CS-CSMS connection requires an instance of a fixed connection
       requirements:
         - dependency: my_fixed_connection
+        - dependency: my_wireless_connection
 
     my_fixed_connection:
       type: fixed_connection
