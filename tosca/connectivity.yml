@@ -63,9 +63,11 @@ interface_types:
     operations:
       # TODO add resource for the listed connections
       # The simple way is just to call some named executable like this
-      add_resource: executable_which_adds_resource
-      # but TODO is something which uses a expression on a count of affected connection to set value of resource_size
-
+      change_resource_allocation:
+      # TOSCA only contains functions for string concatenation and tokenization; it has not arithmetic functions and so it is not possible
+      # to define an expression on a count of affected connection to set value of resource_size
+        description: example placeholder for a function which changes assigned resources of a slice in response to some set of input values
+        implementation: executable_which_changes_resource.sh
 
 # Define Node Types, one each for fixed and slice
 node_types:
@@ -150,7 +152,7 @@ topology_template:
   node_templates:
     my_CS_CSMS_connection:
       type: CS_CSMS_connection
-      # Every CS-CSMS connection requires an instance of a fixed connection
+      # Every CS-CSMS connection requires an instance of a fixed connection and a wireless connection
       requirements:
         - dependency: my_fixed_connection
         - dependency: my_wireless_connection
@@ -174,6 +176,12 @@ topology_template:
       # this uses the abstract node template method
       # Abstract node template (placeholder) to be selected by provider
       directives: [ select ]
+      interfaces:
+        5G_slice_management_interface:
+          operations:
+            change_resource_allocation:
+              inputs:
+                resource_size: 4/2
 
   policies:
     - wireless_connection_affinity:
