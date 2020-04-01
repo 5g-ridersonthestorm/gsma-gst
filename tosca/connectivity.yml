@@ -176,9 +176,9 @@ topology_template:
       directives: [ select ]
 
   policies:
-    wireless_connection_affinity:
-      # make all wireless connections use the same slice
-      type: tosca.policies.Placement.Colocate
-      description: Keep all instances of my_wireless_connection on one instance of cs_csms_slice
-      properties:
-        affinity: cs_csms_slice
+    - wireless_connection_affinity:
+        # make all wireless connections use the same slice
+        type: tosca.policies.Placement.Colocate
+        description: Keep all instances of my_wireless_connection on one instance of cs_csms_slice
+        properties:
+          affinity: cs_csms_slice
