@@ -176,12 +176,6 @@ topology_template:
       # this uses the abstract node template method
       # Abstract node template (placeholder) to be selected by provider
       directives: [ select ]
-      interfaces:
-        5G_slice_management_interface:
-          operations:
-            change_resource_allocation:
-              inputs:
-                resource_size: 4/2
 
   policies:
     - wireless_connection_affinity:
