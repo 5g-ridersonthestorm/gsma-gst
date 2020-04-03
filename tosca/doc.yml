@@ -1,0 +1,155 @@
+description: A TOSCA template to implement the connectivity service required between
+  an EV Charging Station and a Charging Station Management System as part of 5G Riders
+  on the Storm 2020 Catalyst for TMForum
+nodeTemplates:
+  cs_csms_slice:
+    description: ""
+    types:
+      5G_embb_slice:
+        description: A concrete class for a slice for enhanced Mobile Broadband
+        parent: 5G_slice
+      5G_slice:
+        description: An abstract class for a network capable of supporting multiple
+          point to point connection at a given qos
+        parent: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
+      nodes.org.tmforum.models.sidmodels:
+        metadata:
+          sid_release: "19.0"
+      nodes.org.tmforum.models.sidmodels.ResourceDomain:
+        metadata:
+          sid_release: "19.0"
+        parent: nodes.org.tmforum.models.sidmodels
+      nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE:
+        metadata:
+          sid_release: "19.0"
+        parent: nodes.org.tmforum.models.sidmodels.ResourceDomain
+      nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE:
+        metadata:
+          sid_release: "19.0"
+        parent: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE
+      nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource:
+        metadata:
+          sid_release: "19.0"
+        parent: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE
+    properties:
+      resource_size:
+        $value: 10
+        $type: integer
+    attributes:
+      status:
+        $description: |-
+          This is an enumerated integer whose value indicates the current status of the object. The following values are defined: 0: Unknown 1: OK 2: Initializing 3: Starting 4: Paused 5: Stopping 6: Stopped 7: Degraded 8: Stressed 9: Predicted Failure 10: Error - General 11: Error - Non Recoverable 12: Not Installed or Not Present 13: In Maintenance 14: Unable To Contact 15: Lost Communications
+          Stopped indicates that the CompoundResource is known to still exist, but it is no longer operational. However, it has not failed.
+          Stressed indicates that the LogicalResource is functioning, but needs attention (e.g., it may be overheating, or overloaded in some way). This is similar to Predicted Failure, which indicates that this CompoundResource is functioning properly, but is predicting a failure in the near future.
+          In Maintenance indicates that this LogicalResource is being configured, maintained, or otherwise administered and is NOT available for service
+        $value: null
+        $type: integer
+    capabilities:
+      SliceType:
+        description: ""
+        types:
+          sliceType:
+            description: 'The slice type name given to some mix of speed, latency
+              etc. '
+            parent: tosca::Root
+          sliceType_embb:
+            description: enhanced Mobile Broadband (eMBB) provides higher speeds for
+              applications such as web browsing, streaming and video conferencing
+            parent: sliceType
+          tosca::Root:
+            description: This is the default (root) TOSCA Capability Type definition
+              that all other TOSCA Capability Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.1
+              normative: "true"
+        properties: {}
+        attributes: {}
+        minRelationshipCount: 0
+        maxRelationshipCount: -1
+    interfaces:
+      5G_slice_management_interface:
+        description: This interface is used to control the resources allocated to
+          a slice
+        types:
+          5G_slice_management:
+            description: This interface is used to control the resources allocated
+              to a slice
+        operations:
+          change_resource_allocation:
+            description: example placeholder for a function which changes assigned
+              resources of a slice in response to some set of input values
+            implementation: executable_which_changes_resource.sh
+            inputs:
+              affected_connections_list:
+                $description: A list of zero one or more CS_CSMS_connection identified
+                  by the value of their wireless_connection_id which we know is defined
+                  as an integer
+      Standard:
+        description: This is an enumerated integer whose value indicates the current
+          status of the object
+        types:
+          org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource.status:
+            description: This is an enumerated integer whose value indicates the current
+              status of the object
+            metadata:
+              sid_release: "19.0"
+              source: org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource.status
+        inputs: {}
+        operations:
+          create:
+            description: '13: In Maintenance'
+          delete:
+            description: '12: Not Installed or Not Present'
+          set_Lost_Communications:
+            description: '15: Lost Communications'
+          set_degraded:
+            description: '7: Degraded'
+          set_error_general:
+            description: '10: Error - General'
+          set_error_non_recoverable:
+            description: '11: Error - Non Recoverable'
+          set_initializing:
+            description: '2: Initializing'
+          set_paused:
+            description: '4: Paused'
+          set_predicted_failure:
+            description: '9: Predicted Failure'
+          set_starting:
+            description: '3: Starting'
+          set_stopping:
+            description: '5: Stopping'
+          set_stressed:
+            description: '8: Stressed'
+          set_unable_to_contact:
+            description: '14: Unable To Contact'
+          set_unknown:
+            description: '0: Unknown'
+          start:
+            description: '1: OK'
+          stop:
+            description: '6: Stopped'
+  my_CS_CSMS_connection:
+    types:
+      CS_CSMS_connection:
+        description: assured connection using combination of fixed and wireless
+        parent: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction
+      nodes.org.tmforum.models.sidmodels:
+        metadata:
+          sid_release: "19.0"
+      nodes.org.tmforum.models.sidmodels.ResourceDomain:
+        metadata:
+          sid_release: "19.0"
+        parent: nodes.org.tmforum.models.sidmodels
+      nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE:
+        metadata:
+          sid_release: "19.0"
+        parent: nodes.org.tmforum.models.sidmodels.ResourceDomain
+      nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE:
+        metadata:
+          sid_release: "19.0"
+        parent: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE
+      nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction:
+        metadata:
+          sid_release: "19.0"
+        parent: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE
