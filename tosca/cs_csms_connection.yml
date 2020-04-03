@@ -103,6 +103,7 @@ topology_template:
         5G_slice_management_interface:
           operations:
             change_resource_allocation:
+              # It should be possible to define implementation in the interface type definition but puccini does not seem to pick it up so repeat it here
               implementation: executable_which_changes_resource.sh
               inputs: 
                 affected_connections_list: { get_input: [ SELF, affected_connections_list ] }

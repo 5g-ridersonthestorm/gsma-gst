@@ -1,0 +1,81 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+imports:
+  # - file: https://github.com/pmjordan/TOSCA_for_TMForum/blob/master/sid.yml
+  # would normally refer to external repository but for now make it local
+  - file: ../../../../TOSCA_for_TMForum/sid.yml
+  # The content is a TOSCA encoding of selected SID information model entities as explained in IG1176
+    namespace_prefix: sid
+
+data_types:
+  sliceQoSType:
+    derived_from: string
+    constraints:
+      - equal: [embb,urllc,mmtc]
+
+capability_types:
+# define the different capabilities a slice may have. This has the same function as sliceQoSType but allows use of the caps/reqs feature and including of descriptions.
+  sliceType:
+    description: >-
+      The slice type name given to some mix of speed, latency etc. 
+    derived_from: tosca.capabilities.Root
+
+  sliceType_embb:
+    description: enhanced Mobile Broadband (eMBB) provides higher speeds for applications such as web browsing, streaming and video conferencing
+    derived_from: sliceType
+
+  sliceType_urllc:
+    description: Ultra-reliable and Low-latency communications (URLLC) enables mission-critical applications, industrial automation, new medical applications, and autonomous driving that require very short network traversal time; and
+    derived_from: sliceType
+  
+  sliceType_mmtc:
+    description: massive Machine Type Communications (mMTC) extends LTE (Long Term Evolution) IoT (Internet of Things) capabilities to support a huge number of devices with enhanced coverage and long battery life.
+    derived_from: sliceType
+
+interface_types:
+  5G_slice_management:
+    description: This interface is used to control the resources allocated to a slice
+    operations:
+      change_resource_allocation:
+        description: example placeholder for a function which changes assigned resources of a slice in response to some set of input values
+          # TOSCA only contains functions for string concatenation and tokenization; it has not arithmetic functions and so it is not possible
+          # to define an expression on a count of affected connection to set value of resource_size
+          # The simple way is just to call some named executable like this
+        implementation: executable_which_changes_resource.sh
+        inputs: 
+          affected_connections_list:
+            type: list 
+            description: A list of zero one or more CS_CSMS_connection identified by the value of their wireless_connection_id which we know is defined as an integer
+            required: true
+            default: null
+            entry_schema:
+              type: integer
+
+node_types:
+  5G_slice:
+    description: An abstract class for a network capable of supporting multiple point to point connection at a given qos
+    derived_from: sid:nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
+    properties:
+      sliceQoSType: 
+        type: string
+        required: false
+      resource_size:
+        type: integer
+        default: 1
+    interfaces:
+      5G_slice_management_interface:
+        type: 5G_slice_management
+
+  5G_embb_slice:
+    description: A concrete class for a slice for enhanced Mobile Broadband
+    derived_from: 5G_slice
+    properties:
+      sliceQoSType: 
+        constraints:
+          - equal: embb
+      # Add here any extra properties to reflect the content of GST, here is an example
+      resource_size:
+        type: integer
+        default: 10
+    capabilities:
+      SliceType: sliceType_embb
