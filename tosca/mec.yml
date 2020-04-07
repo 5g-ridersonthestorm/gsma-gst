@@ -1,0 +1,47 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+description: A TOSCA template to implement migration of WheresMyChargePoint software to specific MEC DCs as part of 5G Riders on the Storm 2020 Catalyst for TMForum
+
+metadata:
+  # The following fields are "normative" and expected in TOSCA 
+  template_name: WheresMyChargePoint
+  template_author: paul.m.jordan@bt.com
+  template_version: '1.0'
+
+imports:
+  # - file: https://github.com/pmjordan/TOSCA_for_TMForum/blob/master/sid.yml
+  # would normally refer to external repository but for now make it local
+  - file: ../../../../TOSCA_for_TMForum/sid.yml
+  # The content is a TOSCA encoding of selected SID information model entities as explained in IG1176
+    namespace_prefix: sid
+
+topology_template:
+  
+  node_templates:
+    mec
+
+    WheresMyChargePoint:
+      type: #as this is a classic VNF we have a choice of how to model it. Could be based on TOSCA node types, SID software entities or ETSI VNFs. Depends on what is easiest for the orchestrator vendor.
+    requires: # host must be at least one host
+
+  # host for WheresMyChargePoint is normally cloud
+
+  # host for WheresMyChargePoint can be mec 
+
+  interface on mec
+    add app 
+      input is list of apps
+      invoke workflow possibly via policy
+    remove app 
+      input is list of apps
+      invoke workflow possibly via policy
+
+  workflow
+    add app
+      deploy app
+      sync app
+      config upf with mec fqdn ?how do we get upf id?
+
+    remove app
+      ?
+
+  

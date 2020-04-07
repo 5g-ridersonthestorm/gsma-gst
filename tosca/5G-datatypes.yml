@@ -1,0 +1,82 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+data_types:
+    # There are four approaches to import the JSON schemas for GST into TOSCA. Approach 4 is recommended
+
+  # Approach 1 is to convert the JSON schema into YAML (which can be done by a utility filter e.g. https://jsonformatter.org/json-to-yaml)
+  # and then process the result to be TOSCA
+  # This exposes the properties within each GST group so that they can be used in the TOSCA template
+  # but any JSON definition of mandatory parameters is lost unless handled manually
+  # Here is an example
+  
+  # Delete the line "$schema": "http://json-schema.org/draft-07/schema#"
+  # delete title string and make title value the name of the data type adding a colon
+  # title: "1-WHO" 
+  1-WHO:
+    # retain description from JSON to YAML conversion and indent it
+    description: "1-WHO"
+    #delete the object type line
+    #type: object
+    properties: 
+    # indent and remove quotes from properties
+    #"CustomerName/Reference": 
+      CustomerName/Reference: 
+        # retain description
+        description: "Customer name or reference"
+        # retain type assuming it is string, boolean which are the only types currently used (others may be possible)
+        type: string
+        # convert any format clause to a TOSCA constraint element
+        # Currently there is only one format used in the schema. Translation would be better if the JSON schema was re-defined to be type dateYAML timestamp 
+        # convert any enum clause to a TOSCA valid_values constraint element
+      # JSON and the converted YAML has a 'required' field in the data type definition of the group but TOSCA only allows 'required: true' when the data type is used. 
+      # So as a work around if the JSON schema required field is not null then each property in the schema required by field must have a constraint element added in the TOSCA property definition
+      # required: Here is an example but it it not needed in any current gst json schemas
+      #constraint:
+        #pattern: "(.+)" # must be something; cannot be nothing
+
+
+  # Approach 2 is to refer use the TOSCA schema keyword to signal to the orchestrator that the data value can be validated at run time using the referenced schema
+  # This is OK of the TOSCA template does not need to get the value of any property inside the GST group.
+  # Here is an example
+
+  2-WHAT:
+    description: "2-WHAT"
+    derived_from: string
+    constraints:
+      # The first schema keyword is TOSCA, the string withing the braces is JSON and includes a schema keyword so that we can refer to a URI rather than copying the JSON in line
+      - schema: { "$schema": "https://raw.githubusercontent.com/5g-ridersonthestorm/gsma-gst/master/gst/json-schema/2-what.json#" }
+
+  # Approach 3 is to use a JSON pointer in the TOSCA constraint schema clause to target the particular part of the JSON schema relevant to the TOSCA datatype
+  # The orchestrator would need to support JSON pointers to perform validation
+  # as would any TOSCA based data entry form
+  # Here is an example (shown for Area, the only constrained parameter in 3-WHERE)
+
+  3-WHERE:
+    description: 3-WHERE
+    properties:
+      LocationScope:
+        description: Scope of location
+        type: string
+      Location:
+        description: Location name
+        type: string
+      Area:
+        description: Polygon of <Lat,Long> coordinates representing the area
+        type: string
+        constraints:
+        - schema: { "$schema": "https://raw.githubusercontent.com/5g-ridersonthestorm/gsma-gst/master/gst/json-schema/3-where.json#/properties/Area" }
+
+      AreaSize(SqKm):
+        description: Needs to be calculated by some means, e.g. user creates a polygon on the UI to derive result,  enter a set of region/city/suburb names/postcodes and leverage GIS to derive result, etc.
+        type: string
+      ConnectionDensity(Ue/SqKm):
+        description: Should be validated against max, and disallowed if too high.
+        type: string
+      AvailableCellularFrequencyBands:
+        description: This is informational.  If customer selects a given area, this would scope the frequency bands that are relevant in that area.  This  can be used as a feed-forward filter for d
+        type: string
+
+  
+  # Approach 4 is to modify the content of gst/json-schema so that each row of the GST has its own JSON schema and then use approach 1 or 2 on that. 
+  # The GST JSON schema could still also have schemas for the groups as well
+  # No example i shown as this is more work, requires changes outside TOSCA and has no advantage over approach 3.
+  

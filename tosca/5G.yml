@@ -6,6 +6,8 @@ imports:
   - file: ../../../../TOSCA_for_TMForum/sid.yml
   # The content is a TOSCA encoding of selected SID information model entities as explained in IG1176
     namespace_prefix: sid
+  # The 5G GST datatypes can be imported here but are not yet used
+  # - file: 5G-datatypes.yml
 
 data_types:
   sliceQoSType:
