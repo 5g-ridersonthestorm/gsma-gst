@@ -27,12 +27,7 @@ data_types:
         # convert any format clause to a TOSCA constraint element
         # Currently there is only one format used in the schema. Translation would be better if the JSON schema was re-defined to be type dateYAML timestamp 
         # convert any enum clause to a TOSCA valid_values constraint element
-      # JSON and the converted YAML has a 'required' field in the data type definition of the group but TOSCA only allows 'required: true' when the data type is used. 
-      # So as a work around if the JSON schema required field is not null then each property in the schema required by field must have a constraint element added in the TOSCA property definition
-      # required: Here is an example but it it not needed in any current gst json schemas
-      #constraint:
-        #pattern: "(.+)" # must be something; cannot be nothing
-
+      # JSON and the converted YAML has a 'required' field in the data type definition of the group then add required: true to each indicated property 
 
   # Approach 2 is to refer use the TOSCA schema keyword to signal to the orchestrator that the data value can be validated at run time using the referenced schema
   # This is OK of the TOSCA template does not need to get the value of any property inside the GST group.
