@@ -1,11 +1,11 @@
 tosca_definitions_version: tosca_simple_yaml_1_3
-description: A TOSCA template to implement the connectivity service required between an EV Charging Station and a Charging Station Management System as part of 5G Riders on the Storm 2020 Catalyst for TMForum
+description: A TOSCA template to implement the a service which includes a 5G backup to a fixed connection. The first use is a connection between an EV Charging Station and a Charging Station Management System as part of 5G Riders on the Storm 2020 Catalyst for TMForum
 
 metadata:
   # The following fields are "normative" and expected in TOSCA 
-  template_name: CS to CSMS connectivity
+  template_name: 5G Service Assure
   template_author: paul.m.jordan@bt.com
-  template_version: '4.0'
+  template_version: '5.0'
 
 imports:
   # - file: https://github.com/pmjordan/TOSCA_for_TMForum/blob/master/sid.yml
@@ -27,7 +27,7 @@ imports:
 
 # Define Node Types
 node_types:
-  CS_CSMS_connection:
+  5G_assure_connection:
     description: assured connection using combination of fixed and wireless
     derived_from: sid:nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction
     capabilities:
@@ -75,8 +75,8 @@ policy_types:
 topology_template:
 
   node_templates:
-    my_CS_CSMS_connection:
-      type: CS_CSMS_connection
+    my_assured_connection:
+      type: 5G_assure_connection
       # Every CS-CSMS connection requires an instance of a fixed connection and a wireless connection
       requirements:
         - dependency: fixed_connection
@@ -90,14 +90,14 @@ topology_template:
     my_wireless_connection:
       type: wireless_connection
       requirements:
-        - slice: cs_csms_slice
+        - slice: slice_for_5G_assure
             # the commented out syntax is uses the target node_filter method; instead we use the abstract node template method in cs_csms_slice, either would be possible
             # node_filter:
             #   properties:
             #     sliceQoSType:
             #       - { equal: embb }
 
-    cs_csms_slice:
+    slice_for_5G_assure:
       type: 5G:5G_embb_slice
       interfaces:
         5G_slice_management_interface:
@@ -114,6 +114,6 @@ topology_template:
   policies:
     - wireless_connection_affinity:
         type: tosca.policies.Placement.Colocate
-        description: Keep all instances of my_wireless_connection on a single instance of cs_csms_slice
+        description: Keep all instances of my_wireless_connection on a single instance of slice_for_5G_assure
         properties:
-          affinity: cs_csms_slice
+          affinity: slice_for_5G_assure
