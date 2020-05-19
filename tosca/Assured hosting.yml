@@ -7,44 +7,138 @@ metadata:
   template_author: paul.m.jordan@bt.com
   template_version: '1.1'
 
-imports:
-  # - file: https://github.com/pmjordan/TOSCA_for_TMForum/blob/master/sid.yml
-  # would normally refer to external repository but for now make it local
-  - file: ../../../../TOSCA_for_TMForum/sid.yml
-  # The content is a TOSCA encoding of selected SID information model entities as explained in IG1176
-    namespace_prefix: sid
+repositories:
+  myRepository:
+    description: Location where app image files are stored
+    # all images mentioned in this template must be in the same repo as TOSCA cannot use a variable for the repo location in the topology template
+    url: http:/cantmakethisavariable.com
+    credential: 
+      protocol: http
+      token_type: basic_auth
+      # Username and password are combined into a string
+      # Note: this would be base64 encoded before transmission by any impl.
+      token: myusername:mypassword
+
+node_types:
+  myapp_type:
+    derived_from: tosca.nodes.SoftwareComponent
+    interfaces:
+      Standard:
+        operations:
+          create:
+            inputs:
+              create_zip: 
+                type: string
+  
+
+# imports:
+  # # - file: https://github.com/pmjordan/TOSCA_for_TMForum/blob/master/sid.yml
+  # # would normally refer to external repository but for now make it local
+  # - file: ../../../../TOSCA_for_TMForum/sid.yml
+  # # The content is a TOSCA encoding of selected SID information model entities as explained in IG1176
+  #   namespace_prefix: sid
 
 topology_template:
-  
+  # inputs:
+  #   targetComputeAdminAddress:
+  #     type: string
+  #     description: The admin address MEC which is to host the app
+  #   app_image_URI:
+  #     type: string
+
   node_templates:
-    mec:
+    myApp:
+      #as this is a classic VNF we have a choice of how to model it. Could be based on TOSCA node types, SID software entities or ETSI VNFs. Depends on what is easiest for the orchestrator vendor. We have chosen TOSCA native
+      type: myapp_type #tosca.nodes.SoftwareComponent
+      requirements:
+        # SoftwareComponent requires hosting on Compute by definition but supplement that requirement for an abstract node
+        - host: myapp_compute
 
-    app:
-      type: #as this is a classic VNF we have a choice of how to model it. Could be based on TOSCA node types, SID software entities or ETSI VNFs. Depends on what is easiest for the orchestrator vendor.
-      name: WheresMyChargePoint
-    requires: # at least one cloud service provider
-
-  # cloud provider for app server, may be more than one
-    # each will have credentials
-    # credentials supplied at order time
-
-  # mec host for app server, may be several
+      interfaces:
+        Standard:
+          operations:
+            create: 
+              implementation: scripts/create.sh
+              inputs:
+                create_zip: { get_artifact: [ SELF, myapp_artifact ] }
+              
+      artifacts:
+        myapp_artifact: 
+          type: tosca:Deployment.Image
+          file: a_filename_which_cannot_be_a_variable
+          repository: myRepository
+    
+    # Abstract node template (placeholder) to be selected by provider        
+    myapp_compute:
+      type : tosca.nodes.Compute
+      directives: [ select ]
+      # This node_filter is required by commented out awaiting a fix for puccini issue #34
+      # node_filter:
+      #   capabilities:
+      #     - host:
+      #         attributes:
+      #           - private_address: { equal: {get_input: [ targetComputeAdminAddress ] }}
   
-  interface on mec
-    add app 
-      input is list of apps
-      invoke workflow possibly via policy
-    remove app 
-      input is list of apps
-      invoke workflow possibly via policy
+  # groups:
+  #   allMecs:
+  #     description: All MECs in the network
+  #     members: [ mecType ]
 
-  workflow
-    add app
-      deploy app
-      sync app
-      config upf with mec fqdn ?how do we get upf id?
+  # # workflows:
+  #   migrateAppToMec:
+  #     description: load a MEC with image for an app, start it up, sync the state data and redirect traffic to app on a MEC
+  #     inputs:
+  #       mecAdminEndpoint:
+  #         type: <property_type> 
+  #         description: A property definition to say which mec the app is to be loaded onto
+  #         required: <property_required>
+  #         default: <default_value>
+  #         status: <status_value>
+  #         constraints: 
+  #           - <property_constraints>
+  #         key_schema : <key_schema_definition>
+  #         entry_schema: <entry_schema_definition>
+  #         metadata:
+  #           <metadata_map>
+  #       imageDefinition:
+  #       imageRepository:
+  #         type:
+  #       stateDataEndpoint:
+  #       smfId:
+  #     preconditions:
+  #     - <workflow_precondition_definition>
+  #     steps:
+  #       Load_the_image_to_the_MEC:
+  #         target: allMecs
+  #         condition:
+  #           - assert:
+  #               - SomeMecAttribute: [{equal: a_value_which_filters_only_those_Mecs_of_interest}]
+  #               # Note the behavior of TOSCA is undefined here. if the assertion fails does the MEC in the group not get actioned (what we want) or 
+  #               # does the whole target group not get actioned (which would not achieve or aim)
+  #               # as it is undefined it is probably a function of the orchestrator. 
+  #               # No point asking OASIS for clarification as workflow is due to be reviewed in next release.
+  #       Start the app
+  #       Sync the state data onto the MEC hosted app
+  #       redirect traffic coming from users and CSs in the area of teh MEC to the app hosted on the MEC
+  #     implementation:
+  #       <operation_implementation_definitions>
+  #     outputs:
+  #     # return an ID for the app which was created so that it can be removed?
+  #       <attribute_mappings>
 
-    remove app
-      ?
+  #   removeAppFromMec:
+  #     description: redirect traffic to app on a cloud and remove app from MEC
+  #     metadata: 
+  #       <map of string>
+  #     inputs:
+  #       <property_definitions>
+  #     preconditions:
+  #     - <workflow_precondition_definition>
+  #     steps:
+  #       <workflow_steps>
+  #     implementation:
+  #       <operation_implementation_definitions>
+  #     outputs:
+  #       <attribute_mappings>
 
   
