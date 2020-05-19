@@ -31,20 +31,8 @@ node_types:
                 type: string
   
 
-# imports:
-  # # - file: https://github.com/pmjordan/TOSCA_for_TMForum/blob/master/sid.yml
-  # # would normally refer to external repository but for now make it local
-  # - file: ../../../../TOSCA_for_TMForum/sid.yml
-  # # The content is a TOSCA encoding of selected SID information model entities as explained in IG1176
-  #   namespace_prefix: sid
-
 topology_template:
-  # inputs:
-  #   targetComputeAdminAddress:
-  #     type: string
-  #     description: The admin address MEC which is to host the app
-  #   app_image_URI:
-  #     type: string
+
 
   node_templates:
     myApp:
@@ -78,67 +66,6 @@ topology_template:
       #     - host:
       #         attributes:
       #           - private_address: { equal: {get_input: [ targetComputeAdminAddress ] }}
-  
-  # groups:
-  #   allMecs:
-  #     description: All MECs in the network
-  #     members: [ mecType ]
 
-  # # workflows:
-  #   migrateAppToMec:
-  #     description: load a MEC with image for an app, start it up, sync the state data and redirect traffic to app on a MEC
-  #     inputs:
-  #       mecAdminEndpoint:
-  #         type: <property_type> 
-  #         description: A property definition to say which mec the app is to be loaded onto
-  #         required: <property_required>
-  #         default: <default_value>
-  #         status: <status_value>
-  #         constraints: 
-  #           - <property_constraints>
-  #         key_schema : <key_schema_definition>
-  #         entry_schema: <entry_schema_definition>
-  #         metadata:
-  #           <metadata_map>
-  #       imageDefinition:
-  #       imageRepository:
-  #         type:
-  #       stateDataEndpoint:
-  #       smfId:
-  #     preconditions:
-  #     - <workflow_precondition_definition>
-  #     steps:
-  #       Load_the_image_to_the_MEC:
-  #         target: allMecs
-  #         condition:
-  #           - assert:
-  #               - SomeMecAttribute: [{equal: a_value_which_filters_only_those_Mecs_of_interest}]
-  #               # Note the behavior of TOSCA is undefined here. if the assertion fails does the MEC in the group not get actioned (what we want) or 
-  #               # does the whole target group not get actioned (which would not achieve or aim)
-  #               # as it is undefined it is probably a function of the orchestrator. 
-  #               # No point asking OASIS for clarification as workflow is due to be reviewed in next release.
-  #       Start the app
-  #       Sync the state data onto the MEC hosted app
-  #       redirect traffic coming from users and CSs in the area of teh MEC to the app hosted on the MEC
-  #     implementation:
-  #       <operation_implementation_definitions>
-  #     outputs:
-  #     # return an ID for the app which was created so that it can be removed?
-  #       <attribute_mappings>
-
-  #   removeAppFromMec:
-  #     description: redirect traffic to app on a cloud and remove app from MEC
-  #     metadata: 
-  #       <map of string>
-  #     inputs:
-  #       <property_definitions>
-  #     preconditions:
-  #     - <workflow_precondition_definition>
-  #     steps:
-  #       <workflow_steps>
-  #     implementation:
-  #       <operation_implementation_definitions>
-  #     outputs:
-  #       <attribute_mappings>
 
   
