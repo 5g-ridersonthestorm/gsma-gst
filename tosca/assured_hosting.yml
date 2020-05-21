@@ -32,6 +32,9 @@ interface_types:
 node_types:
   hosted_app_type:
     derived_from: tosca.nodes.SoftwareComponent
+    requirements:
+      - host:
+          occurrences: [ 1, UNBOUNDED ]
     interfaces:
       Standard:
         operations:
@@ -66,6 +69,7 @@ topology_template:
   inputs:
     targetComputeAdminAddress:
       type: string
+      # may be a comma separated list
     public_app_address:
       type: string
 
@@ -93,7 +97,10 @@ topology_template:
         data: http://livelocation.com/heresmychargepointapp/operationalstate.json
       requirements:
         # SoftwareComponent requires hosting on Compute by definition but supplement that requirement for an abstract node
-        - host: myapp_compute
+        - host: 
+            node: myapp_compute
+         #   occurrences: [ 1,1 ]
+        # TODO add occurrences to cope with multiple MECs, waiting for bug fix #36
 
     # Abstract node template (placeholder) to be selected by provider        
     myapp_compute:
@@ -104,7 +111,8 @@ topology_template:
       #   capabilities:
       #     - host:
       #         attributes:
-      #           - private_address: { equal: {get_input: [ targetComputeAdminAddress ] }}
+      #           - private_address: { in_range: {get_input: [ targetComputeAdminAddress ] }}
+
 
     mecs_controlling_smf:
       type: smf_type
