@@ -72,8 +72,8 @@ topology_template:
   node_templates:
     myApp:
       # as this is a classic VNF we have a choice of how to model it. Could be based on TOSCA node types, SID software entities or ETSI VNFs. Depends on what is easiest for the orchestrator vendor. 
-      # Initially we tried to use TOSCA native but in this scenario the create artefact URL and the URL of the repository on which it is store both need to be passed in as inputs but TOSCA does not allow these to be paramterized.
-      # We have therefore chosen SID to model the repository
+      # We have therefore chosen TOSCA native but the downside is that the create artefact URL and the URL of the repository on which it is store both need to be passed in as inputs but TOSCA does not allow these to be paramterized.
+      # The work around is to move these parts to an external file so that only one line in this generic template needs to be edited.
       type: hosted_app_type #tosca.nodes.SoftwareComponent
       interfaces:
         Standard:
