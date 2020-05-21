@@ -1,153 +1,25 @@
-tosca_definitions_version: tosca_simple_yaml_1_3
-description: A TOSCA template to deploy a specific app on a mec and direct requests to it
+ tosca_definitions_version: tosca_simple_yaml_1_3
 
-metadata:
+ metadata:
   # The following fields are "normative" and expected in TOSCA 
-  template_name: wheresmychargepointapp
+  template_name: details of a particular app for use in generic_app
   template_author: paul.m.jordan@bt.com
   template_version: '1.0'
-  # look for syntax error with the command below
-  parse_command: puccini-tosca parse "tosca/wheresmychargepoint.yml" -i targetComputeAdminAddress="10.10.10.10" -i app_url="wheresmychargepoint.com"> /dev/null
 
-imports:
-  - file: hostedapp_1.yml
+node_templates:
+  myApp:
+    type: hosted_app_type
+    artifacts:
+      deployment_file: 
+        description: The actual install file for this app
+        file: http://cloudrepo:80/files/wheresmychargepointapp.iso
+      data: http://livelocation.com/heresmychargepointapp/operationalstate.json
 
-capability_types:
-  MECManager:
-    derived_from: tosca.capabilities.Node
-    valid_source_types: [ smf_type ]
-
-interface_types:
-  smf_management:
-    derived_from: tosca.interfaces.Root
-    operations:
-      redirect:
-        inputs:
-          app_url:
-            type: string
-          new_address:
-            type: string
-
-node_types:
-  hosted_app_type:
-    derived_from: tosca.nodes.SoftwareComponent
-    interfaces:
-      Standard:
-        operations:
-          create:
-            inputs:
-              deployment_file:
-                type: string
-          configure:
-            inputs: 
-              sync_data:
-                type: string
-
-  mec_type:
-    derived_from: tosca.nodes.Compute
-    requirements:
-      - controlling_smf:
-          capability: MECManager
-          node: smf_type
-          relationship: DependsOn
-
-  smf_type:
-    derived_from: tosca.nodes.Root
-    capabilities:
-      manage_mecs:
-        type: MECManager
-        occurrences: [ 0, UNBOUNDED ]
-    interfaces:
-      smf_management:
-        type: smf_management
-        operations:
-          redirect:
-            inputs:
-              app_url:
-                type: string
-
-topology_template:
-  inputs:
-    targetComputeAdminAddress:
-      type: string
-    app_url:
-      type: string
-
-  node_templates:
-    myApp:
-      # as this is a classic VNF we have a choice of how to model it. Could be based on TOSCA node types, SID software entities or ETSI VNFs. Depends on what is easiest for the orchestrator vendor. 
-      # Initially we tried to use TOSCA native but in this scenario the create artefact URL and the URL of the repository on which it is store both need to be passed in as inputs but TOSCA does not allow these to be paramterized.
-      # We have therefore chosen SID to model the repository
-      type: hosted_app_type #tosca.nodes.SoftwareComponent
-      interfaces:
-        Standard:
-          operations:
-            create:
-              implementation: http://csp.com/hosted_app/scripts/create.sh # create.sh code says get the create artifact and process that
-              inputs: 
-                deployment_file: { get_artifact: [ SELF, deployment_file ] }
-            configure:
-              implementation: scripts/configure.sh
-              inputs: 
-                sync_data: { get_artifact: [ SELF, data ] }
-      artifacts:
-        deployment_file: 
-          description: The actual install file for this app
-          file: http://cloudrepo:80/files/wheresmychargepointapp.iso
-        data: http://livelocation.com/heresmychargepointapp/operationalstate.json
-      requirements:
-        # SoftwareComponent requires hosting on Compute by definition but supplement that requirement for an abstract node
-        - host: myapp_compute
-
-    # Abstract node template (placeholder) to be selected by provider        
-    myapp_compute:
-      type : mec_type
-      # directives: [ select ]
-      # This node_filter is required by commented out awaiting a fix for puccini issue #34
-      # node_filter:
-      #   capabilities:
-      #     - host:
-      #         attributes:
-      #           - private_address: { equal: {get_input: [ targetComputeAdminAddress ] }}
-
-    mecs_controlling_smf:
-      type: smf_type
-      directives: [ select ]
-      interfaces:
-        smf_management:
-          operations:
-            redirect:
-              inputs:
-                app_url: { get_input: app_url }
-                # assume new address is public address of the mec but may have to be an input if a load balancer is used
-                new_address: { get_attribute: [ myapp_compute, public_address ] }
-
-  workflows:
-    deploy:
-      inputs:
-        app_url: 
-          type: string
-      steps:
-        install:
-          target: myApp
-          activities:
-            - set_state: creating
-            - call_operation: Standard.create
-            - set_state: created
-          on_success:
-            - sync
-        sync:
-          target: myApp
-          activities:
-            - set_state: configuring
-            - call_operation: Standard.configure
-            - set_state: configured
-          on_success:
-            - redirect
-        redirect:
-          target: mecs_controlling_smf
-          activities:
-            - set_state: starting
-            - call_operation: smf_management.redirect
-            - set_state: started
-
+  mecs_controlling_smf:
+        type: smf_type
+        interfaces:
+          smf_management:
+            operations:
+              redirect:
+                inputs:
+                  app_url: wheresmychargepoint.com

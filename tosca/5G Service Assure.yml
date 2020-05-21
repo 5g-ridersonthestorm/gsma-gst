@@ -74,6 +74,7 @@ policy_types:
 
 topology_template:
 
+
   node_templates:
     my_assured_connection:
       type: 5G_assure_connection
