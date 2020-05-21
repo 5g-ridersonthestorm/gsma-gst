@@ -26,7 +26,7 @@ interface_types:
         inputs:
           app_url:
             type: string
-          new_address:
+          public_app_address:
             type: string
 
 node_types:
@@ -61,15 +61,12 @@ node_types:
     interfaces:
       smf_management:
         type: smf_management
-        operations:
-          redirect:
-            inputs:
-              app_url:
-                type: string
 
 topology_template:
   inputs:
     targetComputeAdminAddress:
+      type: string
+    public_app_address:
       type: string
 
   node_templates:
@@ -114,7 +111,9 @@ topology_template:
               inputs:
                 app_url: { get_input: app_url }
                 # assume new address is public address of the mec but may have to be an input if a load balancer is used
-                new_address: { get_attribute: [ myapp_compute, public_address ] }
+                # new_address: { get_attribute: [ myapp_compute, public_address ] }
+                # else just get it as an input
+                public_app_address: { get_input: public_app_address }
 
   workflows:
     deploy:
