@@ -10,7 +10,7 @@ node_templates:
   myApp:
     type: hosted_app_type
     artifacts:
-      deployment_file: 
+      mydeployment_file: 
         description: The actual install file for this app
         file: http://cloudrepo:80/files/wheresmychargepointapp.iso
       data: http://livelocation.com/heresmychargepointapp/operationalstate.json
