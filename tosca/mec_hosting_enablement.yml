@@ -11,7 +11,7 @@ metadata:
 
 imports:
   # This file makes this generic template become specific to a particular app
-  - file: wheresmychargepoint.yml
+  - file: wheresmychargepoint.yml # This will have been populated from a jinja2 field 
 
 capability_types:
   MECManager:

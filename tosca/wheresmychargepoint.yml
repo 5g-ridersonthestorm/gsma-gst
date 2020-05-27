@@ -12,8 +12,8 @@ node_templates:
     artifacts:
       mydeployment_file: 
         description: The actual install file for this app
-        file: http://cloudrepo:80/files/wheresmychargepointapp.iso
-      data: http://livelocation.com/heresmychargepointapp/operationalstate.json
+        file: http://cloudrepo:80/files/wheresmychargepointapp.iso # This will have been populated from a jinja2 field
+      data: http://livelocation.com/heresmychargepointapp/operationalstate.json # This will have been populated from a jinja2 field
 
   mecs_controlling_smf:
         type: smf_type
@@ -22,4 +22,4 @@ node_templates:
             operations:
               redirect:
                 inputs:
-                  app_url: wheresmychargepoint.com
+                  app_url: wheresmychargepoint.com # This will have been populated from a jinja2 field
