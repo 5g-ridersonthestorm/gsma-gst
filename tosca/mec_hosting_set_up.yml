@@ -1,0 +1,48 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+description: A TOSCA template to prepare for a later deployment of a specific app on a mec
+
+metadata:
+  # The following fields are "normative" and expected in TOSCA 
+  template_name: generic_app
+  template_author: paul.m.jordan@bt.com
+  template_version: '1.0'
+  # look for syntax error with the command below
+  parse_command: puccini-tosca parse "tosca/mec_hosting_set_up.yml" -i app_image_file="http://cloudrepo:80/files/wheresmychargepointapp.iso" -i app_state_data="data_url" -i app_public_url="wheresmychargepointapp/com" > out.yml
+
+
+node_types:
+  hosted_app_type:
+    derived_from: tosca.nodes.SoftwareComponent
+    interfaces:
+      Standard:
+        operations:
+          create:
+            inputs:
+              image_file:
+                type: string
+              state_data: 
+                type: string
+              public_url:
+                type: string
+
+topology_template:
+  inputs:
+    app_image_file: 
+      type: string #http://cloudrepo:80/files/wheresmychargepointapp.iso # This will have been populated from a jinja2 field
+    app_state_data: 
+      type: string #http://livelocation.com/heresmychargepointapp/operationalstate.json # This will have been populated from a jinja2 field
+    app_public_url: 
+      type: string #wheresmychargepoint.com # This will have been populated from a jinja2 field
+
+  node_templates:
+    myApp:
+      type: hosted_app_type #tosca.nodes.SoftwareComponent
+      interfaces:
+        Standard:
+          operations:
+            create:
+              implementation: create_enablement_tosca.py # orchestrator will need to pass inputs as arguments
+              inputs: 
+                image_file: { get_input: [ SELF, app_image_file ] }
+                state_data: { get_input: [ SELF, app_state_data ] }
+                public_url: { get_input: [ SELF, app_public_url ] }

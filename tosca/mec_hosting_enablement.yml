@@ -90,11 +90,6 @@ topology_template:
               implementation: scripts/configure.sh
               inputs: 
                 sync_data: { get_artifact: [ SELF, data ] }
-      artifacts:
-        mydeployment_file: 
-          description: The actual install file for this app
-          file: http://cloudrepo:80/files/wheresmychargepointapp.iso
-        data: http://livelocation.com/heresmychargepointapp/operationalstate.json
       requirements:
         # SoftwareComponent requires hosting on Compute by definition but supplement that requirement for an abstract node
         - host: 
