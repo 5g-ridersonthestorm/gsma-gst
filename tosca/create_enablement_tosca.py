@@ -4,8 +4,7 @@ import os
 
 
 
-template_filename = "mec_hosting_enablement.j2"
-rendered_filename = "mec_hosting_enablement.yml"
+
 # get arguments and set them in 
 # TODO get args using getopt and put them into render_vars instead of the hard code example below 
 render_vars = {
@@ -13,6 +12,9 @@ render_vars = {
     "app_state_data": "string from arg for state" 
     "app_public_url": "string from arg for url" 
 }
+
+template_filename = "mec_hosting_enablement.j2"
+rendered_filename = "mec_hosting_enablement"+app_public_url+"".yml"
 
 script_path = os.path.dirname(os.path.abspath(__file__))
 template_file_path = os.path.join(current_path, template_filename)
