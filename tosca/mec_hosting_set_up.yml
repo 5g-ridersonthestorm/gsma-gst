@@ -7,7 +7,7 @@ metadata:
   template_author: paul.m.jordan@bt.com
   template_version: '1.0'
   # look for syntax error with the command below
-  parse_command: puccini-tosca parse "tosca/mec_hosting_enablement.wheresmychargingpoint.com.yml" -n tosca/mec_hosting_set_up_inputs.yml
+  parse_command: puccini-tosca parse "tosca/mec_hosting_set_up.yml" -n tosca/mec_hosting_set_up_inputs.yml
 
 node_types:
   hosted_app_type:

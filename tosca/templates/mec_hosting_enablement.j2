@@ -1,0 +1,16 @@
+#Content will be just like mec_hosting_enablement.yml but with jinja2 placeholders for the app specific variables
+
+
+  mecs_controlling_smf:
+        type: smf_type
+        interfaces:
+          smf_management:
+            operations:
+              redirect:
+                inputs:
+                  app_url: {{ app_public_url }} # This will have been populated from a jinja2 field
+
+  other variables
+  app_image_file: {{ "app_image_file" }}
+  app_state_data: {{ "app_state_data" }}
+

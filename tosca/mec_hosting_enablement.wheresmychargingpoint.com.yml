@@ -7,7 +7,8 @@ metadata:
   template_author: paul.m.jordan@bt.com
   template_version: '1.0'
   # look for syntax error with the command below
-  parse_command: puccini-tosca parse "tosca/mec_hosting_enablement.wheresmychargingpoint.com.yml" -i targetComputeAdminAddress="10.10.10.10" -i public_app_address="1.1.1.1"> out.ymlparse_command: puccini-tosca parse "tosca/mec_hosting_enablement.wheresmychargingpoint.com.yml" -i targetComputeAdminAddress="10.10.10.10" -i public_app_address="1.1.1.1"> out.yml  
+  parse_command: puccini-tosca parse "tosca/mec_hosting_enablement.wheresmychargingpoint.com.yml" -i targetComputeAdminAddress="10.10.10.10" -i numberOfMecs=1 -i public_app_address="1.1.1.1"> out.yml
+
 capability_types:
   MECManager:
     derived_from: tosca.capabilities.Node
@@ -59,12 +60,33 @@ node_types:
     interfaces:
       smf_management:
         type: smf_management
+  
+policy_types:
+  mec_scaling_policy:
+    derived_from: tosca.policies.Scaling
+    properties:
+      instances_count:
+        type: integer
+        default: 1
+    targets: 
+      - mec_type
+
+  tosca.policies.Placement.Antilocate:
+    derived_from: tosca.policies.Placement
+    properties:
+      container_type:
+        type: string
+      container_number:
+        type: integer
 
 topology_template:
   inputs:
     targetComputeAdminAddress:
       type: string
       # may be a comma separated list
+    numberOfMecs:
+      type: integer
+      # number of address in the string targetComputeAdminAddress
     public_app_address:
       type: string
 
@@ -89,8 +111,7 @@ topology_template:
         # SoftwareComponent requires hosting on Compute by definition but supplement that requirement for an abstract node
         - host: 
             node: myapp_compute
-         #   occurrences: [ 1,1 ]
-        # TODO add occurrences to cope with multiple MECs, waiting for bug fix #36
+
       artifacts:
         mydeployment_file: 
           description: The actual install file for this app
@@ -102,7 +123,8 @@ topology_template:
     myapp_compute:
       type : mec_type
       # directives: [ select ]
-      # This node_filter is required by commented out awaiting a fix for puccini issue #34
+      # This node_filter is required but commented out awaiting a fix for puccini issue #34
+      # It ensures that the mecs picked by teh orchestrator for hosting the app are ones in the list of required addresses used to ID the MECs
       # node_filter:
       #   capabilities:
       #     - host:
@@ -119,10 +141,23 @@ topology_template:
             redirect:
               inputs:
                 app_url: wheresmychargepoint.com # This will have been populated from a jinja2 field
-                # assume new address is public address of the mec but may have to be an input if a load balancer is used
-                # new_address: { get_attribute: [ myapp_compute, public_address ] }
-                # else just get it as an input
+                # assume new address is public address of the mec but may have to be an input if a load balancer is used thus
+                    # new_address: { get_attribute: [ myapp_compute, public_address ] }
+                    # else just get it as an input
                 public_app_address: { get_input: public_app_address }
+
+  policies:
+    - mec_scaling_policy:
+        type: mec_scaling_policy
+        description: There must be this number of MECs in the solution
+        properties:
+          instances_count: { get_input: numberOfMecs }
+    - app_placement:
+        type: tosca.policies.Placement.Antilocate
+        description: Each app instance must be on a different MEC
+        properties:
+          container_type: myapp_compute 
+          container_number: { get_input: numberOfMecs }
 
   workflows:
     deploy:
@@ -152,3 +187,5 @@ topology_template:
             - set_state: starting
             - call_operation: smf_management.redirect
             - set_state: started
+
+
