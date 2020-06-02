@@ -1,0 +1,1989 @@
+description: A TOSCA template to implement the connectivity service required between
+  an EV Charging Station and a Charging Station Management System as part of 5G Riders
+  on the Storm 2020 Catalyst for TMForum
+nodeTemplates:
+  cs_csms_slice:
+    description: ""
+    types:
+      5G_embb_slice:
+        description: A concrete class for a slice for enhanced Mobile Broadband
+        parent: 5G_slice
+      5G_slice:
+        description: An abstract class for a network capable of supporting multiple
+          point to point connection at a given qos
+        parent: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
+      nodes.org.tmforum.models.sidmodels:
+        metadata:
+          sid_release: "19.0"
+      nodes.org.tmforum.models.sidmodels.ResourceDomain:
+        metadata:
+          sid_release: "19.0"
+        parent: nodes.org.tmforum.models.sidmodels
+      nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE:
+        metadata:
+          sid_release: "19.0"
+        parent: nodes.org.tmforum.models.sidmodels.ResourceDomain
+      nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE:
+        metadata:
+          sid_release: "19.0"
+        parent: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE
+      nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource:
+        metadata:
+          sid_release: "19.0"
+        parent: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE
+    directives:
+    - select
+    properties:
+      resource_size:
+        $constraints:
+        - $functionCall:
+            name: tosca.constraint._primitive
+            arguments:
+            - $value: '!!int'
+            url: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G
+              Riders 2020\github_files\gsma-gst\tosca\5G.yml
+            row: 79
+            column: 9
+            path: node_types["5G_embb_slice"].properties["resource_size"].default
+        $value: 10
+        $type: integer
+    attributes:
+      status:
+        $description: |-
+          This is an enumerated integer whose value indicates the current status of the object. The following values are defined: 0: Unknown 1: OK 2: Initializing 3: Starting 4: Paused 5: Stopping 6: Stopped 7: Degraded 8: Stressed 9: Predicted Failure 10: Error - General 11: Error - Non Recoverable 12: Not Installed or Not Present 13: In Maintenance 14: Unable To Contact 15: Lost Communications
+          Stopped indicates that the CompoundResource is known to still exist, but it is no longer operational. However, it has not failed.
+          Stressed indicates that the LogicalResource is functioning, but needs attention (e.g., it may be overheating, or overloaded in some way). This is similar to Predicted Failure, which indicates that this CompoundResource is functioning properly, but is predicting a failure in the near future.
+          In Maintenance indicates that this LogicalResource is being configured, maintained, or otherwise administered and is NOT available for service
+        $constraints:
+        - $functionCall:
+            name: tosca.constraint._primitive
+            arguments:
+            - $value: '!!int'
+            url: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G
+              Riders 2020\github_files\gsma-gst\tosca\connectivity.yml
+            row: 100
+            column: 5
+            path: topology_template.node_templates["cs_csms_slice"].attributes["status"]
+        $value: null
+        $type: integer
+    requirements: []
+    capabilities:
+      SliceType:
+        description: ""
+        types:
+          sliceType:
+            description: 'The slice type name given to some mix of speed, latency
+              etc. '
+            parent: tosca::Root
+          sliceType_embb:
+            description: enhanced Mobile Broadband (eMBB) provides higher speeds for
+              applications such as web browsing, streaming and video conferencing
+            parent: sliceType
+          tosca::Root:
+            description: This is the default (root) TOSCA Capability Type definition
+              that all other TOSCA Capability Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.1
+              normative: "true"
+        properties: {}
+        attributes: {}
+        minRelationshipCount: 0
+        maxRelationshipCount: -1
+      feature:
+        description: ""
+        types:
+          tosca::Node:
+            description: The Node capability indicates the base capabilities of a
+              TOSCA Node Type.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.2
+              normative: "true"
+            parent: tosca::Root
+          tosca::Root:
+            description: This is the default (root) TOSCA Capability Type definition
+              that all other TOSCA Capability Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.1
+              normative: "true"
+        properties: {}
+        attributes: {}
+        minRelationshipCount: 0
+        maxRelationshipCount: -1
+    interfaces:
+      5G_slice_management_interface:
+        description: This interface is used to control the resources allocated to
+          a slice
+        types:
+          5G_slice_management:
+            description: This interface is used to control the resources allocated
+              to a slice
+        inputs: {}
+        operations:
+          change_resource_allocation:
+            description: example placeholder for a function which changes assigned
+              resources of a slice in response to some set of input values
+            implementation: ""
+            dependencies: []
+            inputs:
+              affected_connections_list:
+                $description: A list of zero one or more CS_CSMS_connection identified
+                  by the value of their wireless_connection_id which we know is defined
+                  as an integer
+                $functionCall:
+                  name: tosca.function.get_input
+                  arguments:
+                  - $value: SELF
+                  - $value: affected_connections_list
+                  url: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G
+                    Riders 2020\github_files\gsma-gst\tosca\connectivity.yml
+                  row: 107
+                  column: 17
+                  path: topology_template.node_templates["cs_csms_slice"].interfaces["5G_slice_management_interface"].operations["change_resource_allocation"].inputs["affected_connections_list"]
+            timeout: -1
+            host: ""
+        notifications: {}
+      Standard:
+        description: This is an enumerated integer whose value indicates the current
+          status of the object
+        types:
+          org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource.status:
+            description: This is an enumerated integer whose value indicates the current
+              status of the object
+            metadata:
+              sid_release: "19.0"
+              source: org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource.status
+        inputs: {}
+        operations:
+          create:
+            description: '13: In Maintenance'
+            implementation: ""
+            dependencies: []
+            inputs: {}
+            timeout: -1
+            host: ""
+          delete:
+            description: '12: Not Installed or Not Present'
+            implementation: ""
+            dependencies: []
+            inputs: {}
+            timeout: -1
+            host: ""
+          set_Lost_Communications:
+            description: '15: Lost Communications'
+            implementation: ""
+            dependencies: []
+            inputs: {}
+            timeout: -1
+            host: ""
+          set_degraded:
+            description: '7: Degraded'
+            implementation: ""
+            dependencies: []
+            inputs: {}
+            timeout: -1
+            host: ""
+          set_error_general:
+            description: '10: Error - General'
+            implementation: ""
+            dependencies: []
+            inputs: {}
+            timeout: -1
+            host: ""
+          set_error_non_recoverable:
+            description: '11: Error - Non Recoverable'
+            implementation: ""
+            dependencies: []
+            inputs: {}
+            timeout: -1
+            host: ""
+          set_initializing:
+            description: '2: Initializing'
+            implementation: ""
+            dependencies: []
+            inputs: {}
+            timeout: -1
+            host: ""
+          set_paused:
+            description: '4: Paused'
+            implementation: ""
+            dependencies: []
+            inputs: {}
+            timeout: -1
+            host: ""
+          set_predicted_failure:
+            description: '9: Predicted Failure'
+            implementation: ""
+            dependencies: []
+            inputs: {}
+            timeout: -1
+            host: ""
+          set_starting:
+            description: '3: Starting'
+            implementation: ""
+            dependencies: []
+            inputs: {}
+            timeout: -1
+            host: ""
+          set_stopping:
+            description: '5: Stopping'
+            implementation: ""
+            dependencies: []
+            inputs: {}
+            timeout: -1
+            host: ""
+          set_stressed:
+            description: '8: Stressed'
+            implementation: ""
+            dependencies: []
+            inputs: {}
+            timeout: -1
+            host: ""
+          set_unable_to_contact:
+            description: '14: Unable To Contact'
+            implementation: ""
+            dependencies: []
+            inputs: {}
+            timeout: -1
+            host: ""
+          set_unknown:
+            description: '0: Unknown'
+            implementation: ""
+            dependencies: []
+            inputs: {}
+            timeout: -1
+            host: ""
+          start:
+            description: '1: OK'
+            implementation: ""
+            dependencies: []
+            inputs: {}
+            timeout: -1
+            host: ""
+          stop:
+            description: '6: Stopped'
+            implementation: ""
+            dependencies: []
+            inputs: {}
+            timeout: -1
+            host: ""
+        notifications: {}
+    artifacts: {}
+  my_CS_CSMS_connection:
+    description: ""
+    types:
+      CS_CSMS_connection:
+        description: assured connection using combination of fixed and wireless
+        parent: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction
+      nodes.org.tmforum.models.sidmodels:
+        metadata:
+          sid_release: "19.0"
+      nodes.org.tmforum.models.sidmodels.ResourceDomain:
+        metadata:
+          sid_release: "19.0"
+        parent: nodes.org.tmforum.models.sidmodels
+      nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE:
+        metadata:
+          sid_release: "19.0"
+        parent: nodes.org.tmforum.models.sidmodels.ResourceDomain
+      nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE:
+        metadata:
+          sid_release: "19.0"
+        parent: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE
+      nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction:
+        metadata:
+          sid_release: "19.0"
+        parent: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE
+    directives: []
+    properties: {}
+    attributes: {}
+    requirements:
+    - name: dependency
+      capabilityTypeName: tosca::Node
+      capabilityName: ""
+      nodeTypeName: fixed_connection
+      nodeTemplateName: ""
+      nodeTemplatePropertyConstraints: {}
+      capabilityPropertyConstraints: {}
+      relationship:
+        description: This type represents a general dependency relationship between
+          two nodes.
+        types:
+          tosca::DependsOn:
+            description: This type represents a general dependency relationship between
+              two nodes.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.7.2
+              normative: "true"
+            parent: tosca::Root
+          tosca::Root:
+            description: This is the default (root) TOSCA Relationship Type definition
+              that all other TOSCA Relationship Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.7.1
+              normative: "true"
+        properties: {}
+        attributes:
+          state:
+            $description: The state of the relationship instance.
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: internal:/tosca/simple/1.3/relationships.yaml
+                row: 36
+                column: 9
+                path: relationship_types["tosca.relationships.Root"].attributes["state"].default
+            $value: initial
+            $type: string
+          tosca_id:
+            $description: A unique identifier of the realized instance of a Relationship
+              Template that derives from any TOSCA normative type.
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G
+                  Riders 2020\github_files\gsma-gst\tosca\connectivity.yml
+                row: 82
+                column: 11
+                path: topology_template.node_templates["my_CS_CSMS_connection"].requirements[0].relationship.attributes["tosca_id"]
+            $value: null
+            $type: string
+          tosca_name:
+            $description: This attribute reflects the name of the Relationship Template
+              as defined in the TOSCA service template. This name is not unique to
+              the realized instance model of corresponding deployed application as
+              each template in the model can result in one or more instances (e.g.,
+              scaled) when orchestrated to a provider environment.
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G
+                  Riders 2020\github_files\gsma-gst\tosca\connectivity.yml
+                row: 82
+                column: 11
+                path: topology_template.node_templates["my_CS_CSMS_connection"].requirements[0].relationship.attributes["tosca_name"]
+            $value: null
+            $type: string
+        interfaces:
+          Configure:
+            description: The lifecycle interfaces define the essential, normative
+              operations that each TOSCA Relationship Types may support.
+            types:
+              tosca::Configure:
+                description: The lifecycle interfaces define the essential, normative
+                  operations that each TOSCA Relationship Types may support.
+                metadata:
+                  citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+                  citation_location: 5.8.5
+                  normative: "true"
+                parent: tosca::Root
+              tosca::Root:
+                description: This is the default (root) TOSCA Interface Type definition
+                  that all other TOSCA Interface Types derive from.
+                metadata:
+                  citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+                  citation_location: 5.8.3
+                  normative: "true"
+            inputs: {}
+            operations:
+              add_source:
+                description: Operation to notify the target node of a source node
+                  which is now available via a relationship.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              add_target:
+                description: Operation to notify the source node of a target node
+                  being added via a relationship.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              post_configure_source:
+                description: Operation to post-configure the source endpoint.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              post_configure_target:
+                description: Operation to post-configure the target endpoint.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              pre_configure_source:
+                description: Operation to pre-configure the source endpoint.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              pre_configure_target:
+                description: Operation to pre-configure the target endpoint.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              remove_source:
+                description: Operation to remove the source node.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              remove_target:
+                description: Operation to remove a target node.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              target_changed:
+                description: Operation to notify source some property or attribute
+                  of the target changed
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+            notifications: {}
+      path: topology_template.node_templates["my_CS_CSMS_connection"].requirements[0]
+    - name: dependency
+      capabilityTypeName: tosca::Node
+      capabilityName: ""
+      nodeTypeName: wireless_connection
+      nodeTemplateName: ""
+      nodeTemplatePropertyConstraints: {}
+      capabilityPropertyConstraints: {}
+      relationship:
+        description: This type represents a general dependency relationship between
+          two nodes.
+        types:
+          tosca::DependsOn:
+            description: This type represents a general dependency relationship between
+              two nodes.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.7.2
+              normative: "true"
+            parent: tosca::Root
+          tosca::Root:
+            description: This is the default (root) TOSCA Relationship Type definition
+              that all other TOSCA Relationship Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.7.1
+              normative: "true"
+        properties: {}
+        attributes:
+          state:
+            $description: The state of the relationship instance.
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: internal:/tosca/simple/1.3/relationships.yaml
+                row: 36
+                column: 9
+                path: relationship_types["tosca.relationships.Root"].attributes["state"].default
+            $value: initial
+            $type: string
+          tosca_id:
+            $description: A unique identifier of the realized instance of a Relationship
+              Template that derives from any TOSCA normative type.
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G
+                  Riders 2020\github_files\gsma-gst\tosca\connectivity.yml
+                row: 84
+                column: 11
+                path: topology_template.node_templates["my_CS_CSMS_connection"].requirements[1].relationship.attributes["tosca_id"]
+            $value: null
+            $type: string
+          tosca_name:
+            $description: This attribute reflects the name of the Relationship Template
+              as defined in the TOSCA service template. This name is not unique to
+              the realized instance model of corresponding deployed application as
+              each template in the model can result in one or more instances (e.g.,
+              scaled) when orchestrated to a provider environment.
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G
+                  Riders 2020\github_files\gsma-gst\tosca\connectivity.yml
+                row: 84
+                column: 11
+                path: topology_template.node_templates["my_CS_CSMS_connection"].requirements[1].relationship.attributes["tosca_name"]
+            $value: null
+            $type: string
+        interfaces:
+          Configure:
+            description: The lifecycle interfaces define the essential, normative
+              operations that each TOSCA Relationship Types may support.
+            types:
+              tosca::Configure:
+                description: The lifecycle interfaces define the essential, normative
+                  operations that each TOSCA Relationship Types may support.
+                metadata:
+                  citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+                  citation_location: 5.8.5
+                  normative: "true"
+                parent: tosca::Root
+              tosca::Root:
+                description: This is the default (root) TOSCA Interface Type definition
+                  that all other TOSCA Interface Types derive from.
+                metadata:
+                  citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+                  citation_location: 5.8.3
+                  normative: "true"
+            inputs: {}
+            operations:
+              add_source:
+                description: Operation to notify the target node of a source node
+                  which is now available via a relationship.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              add_target:
+                description: Operation to notify the source node of a target node
+                  being added via a relationship.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              post_configure_source:
+                description: Operation to post-configure the source endpoint.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              post_configure_target:
+                description: Operation to post-configure the target endpoint.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              pre_configure_source:
+                description: Operation to pre-configure the source endpoint.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              pre_configure_target:
+                description: Operation to pre-configure the target endpoint.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              remove_source:
+                description: Operation to remove the source node.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              remove_target:
+                description: Operation to remove a target node.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              target_changed:
+                description: Operation to notify source some property or attribute
+                  of the target changed
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+            notifications: {}
+      path: topology_template.node_templates["my_CS_CSMS_connection"].requirements[1]
+    capabilities:
+      a_end:
+        description: ""
+        types:
+          tosca::Endpoint:
+            description: This is the default TOSCA type that should be used or extended
+              to define a network endpoint capability. This includes the information
+              to express a basic endpoint with a single port or a complex endpoint
+              with multiple ports. By default the Endpoint is assumed to represent
+              an address on a private network unless otherwise specified.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.7
+              normative: "true"
+            parent: tosca::Root
+          tosca::Root:
+            description: This is the default (root) TOSCA Capability Type definition
+              that all other TOSCA Capability Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.1
+              normative: "true"
+        properties:
+          initiator:
+            $description: The optional indicator of the direction of the connection.
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: internal:/tosca/simple/1.3/capabilities.yaml
+                row: 170
+                column: 9
+                path: capability_types["tosca.capabilities.Endpoint"].properties["initiator"].default
+            $value: source
+            $type: string
+          network_name:
+            $description: 'The optional name (or ID) of the network this endpoint
+              should be bound to. network_name: PRIVATE | PUBLIC | <network_name>
+              | <network_id>.'
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: internal:/tosca/simple/1.3/capabilities.yaml
+                row: 162
+                column: 9
+                path: capability_types["tosca.capabilities.Endpoint"].properties["network_name"].default
+            $value: PRIVATE
+            $type: string
+          protocol:
+            $description: 'The name of the protocol (i.e., the protocol prefix) that
+              the endpoint accepts (any OSI Layer 4-7 protocols). Examples: http,
+              https, ftp, tcp, udp, etc.'
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: internal:/tosca/simple/1.3/capabilities.yaml
+                row: 134
+                column: 9
+                path: capability_types["tosca.capabilities.Endpoint"].properties["protocol"].default
+            $value: tcp
+            $type: string
+          secure:
+            $description: Requests for the endpoint to be secure and use credentials
+              supplied on the ConnectsTo relationship.
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!bool'
+                url: internal:/tosca/simple/1.3/capabilities.yaml
+                row: 145
+                column: 9
+                path: capability_types["tosca.capabilities.Endpoint"].properties["secure"].default
+            $value: false
+            $type: boolean
+        attributes:
+          ip_address:
+            $description: 'Note: This is the IP address as propagated up by the associated
+              node''s host (Compute) container.'
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G
+                  Riders 2020\github_files\gsma-gst\tosca\connectivity.yml
+                row: 78
+                column: 5
+                path: topology_template.node_templates["my_CS_CSMS_connection"].capabilities["a_end"].attributes["ip_address"]
+            $value: null
+            $type: string
+        minRelationshipCount: 0
+        maxRelationshipCount: -1
+      feature:
+        description: ""
+        types:
+          tosca::Node:
+            description: The Node capability indicates the base capabilities of a
+              TOSCA Node Type.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.2
+              normative: "true"
+            parent: tosca::Root
+          tosca::Root:
+            description: This is the default (root) TOSCA Capability Type definition
+              that all other TOSCA Capability Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.1
+              normative: "true"
+        properties: {}
+        attributes: {}
+        minRelationshipCount: 0
+        maxRelationshipCount: -1
+      z-end:
+        description: ""
+        types:
+          tosca::Endpoint:
+            description: This is the default TOSCA type that should be used or extended
+              to define a network endpoint capability. This includes the information
+              to express a basic endpoint with a single port or a complex endpoint
+              with multiple ports. By default the Endpoint is assumed to represent
+              an address on a private network unless otherwise specified.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.7
+              normative: "true"
+            parent: tosca::Root
+          tosca::Root:
+            description: This is the default (root) TOSCA Capability Type definition
+              that all other TOSCA Capability Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.1
+              normative: "true"
+        properties:
+          initiator:
+            $description: The optional indicator of the direction of the connection.
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: internal:/tosca/simple/1.3/capabilities.yaml
+                row: 170
+                column: 9
+                path: capability_types["tosca.capabilities.Endpoint"].properties["initiator"].default
+            $value: source
+            $type: string
+          network_name:
+            $description: 'The optional name (or ID) of the network this endpoint
+              should be bound to. network_name: PRIVATE | PUBLIC | <network_name>
+              | <network_id>.'
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: internal:/tosca/simple/1.3/capabilities.yaml
+                row: 162
+                column: 9
+                path: capability_types["tosca.capabilities.Endpoint"].properties["network_name"].default
+            $value: PRIVATE
+            $type: string
+          protocol:
+            $description: 'The name of the protocol (i.e., the protocol prefix) that
+              the endpoint accepts (any OSI Layer 4-7 protocols). Examples: http,
+              https, ftp, tcp, udp, etc.'
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: internal:/tosca/simple/1.3/capabilities.yaml
+                row: 134
+                column: 9
+                path: capability_types["tosca.capabilities.Endpoint"].properties["protocol"].default
+            $value: tcp
+            $type: string
+          secure:
+            $description: Requests for the endpoint to be secure and use credentials
+              supplied on the ConnectsTo relationship.
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!bool'
+                url: internal:/tosca/simple/1.3/capabilities.yaml
+                row: 145
+                column: 9
+                path: capability_types["tosca.capabilities.Endpoint"].properties["secure"].default
+            $value: false
+            $type: boolean
+        attributes:
+          ip_address:
+            $description: 'Note: This is the IP address as propagated up by the associated
+              node''s host (Compute) container.'
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G
+                  Riders 2020\github_files\gsma-gst\tosca\connectivity.yml
+                row: 78
+                column: 5
+                path: topology_template.node_templates["my_CS_CSMS_connection"].capabilities["z-end"].attributes["ip_address"]
+            $value: null
+            $type: string
+        minRelationshipCount: 0
+        maxRelationshipCount: -1
+    interfaces: {}
+    artifacts: {}
+  my_fixed_connection:
+    description: ""
+    types:
+      fixed_connection:
+        description: connection between two endpoints over a fixed connection
+        parent: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction
+      nodes.org.tmforum.models.sidmodels:
+        metadata:
+          sid_release: "19.0"
+      nodes.org.tmforum.models.sidmodels.ResourceDomain:
+        metadata:
+          sid_release: "19.0"
+        parent: nodes.org.tmforum.models.sidmodels
+      nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE:
+        metadata:
+          sid_release: "19.0"
+        parent: nodes.org.tmforum.models.sidmodels.ResourceDomain
+      nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE:
+        metadata:
+          sid_release: "19.0"
+        parent: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE
+      nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction:
+        metadata:
+          sid_release: "19.0"
+        parent: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE
+    directives: []
+    properties: {}
+    attributes: {}
+    requirements: []
+    capabilities:
+      a_end:
+        description: ""
+        types:
+          tosca::Endpoint:
+            description: This is the default TOSCA type that should be used or extended
+              to define a network endpoint capability. This includes the information
+              to express a basic endpoint with a single port or a complex endpoint
+              with multiple ports. By default the Endpoint is assumed to represent
+              an address on a private network unless otherwise specified.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.7
+              normative: "true"
+            parent: tosca::Root
+          tosca::Root:
+            description: This is the default (root) TOSCA Capability Type definition
+              that all other TOSCA Capability Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.1
+              normative: "true"
+        properties:
+          initiator:
+            $description: The optional indicator of the direction of the connection.
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: internal:/tosca/simple/1.3/capabilities.yaml
+                row: 170
+                column: 9
+                path: capability_types["tosca.capabilities.Endpoint"].properties["initiator"].default
+            $value: source
+            $type: string
+          network_name:
+            $description: 'The optional name (or ID) of the network this endpoint
+              should be bound to. network_name: PRIVATE | PUBLIC | <network_name>
+              | <network_id>.'
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: internal:/tosca/simple/1.3/capabilities.yaml
+                row: 162
+                column: 9
+                path: capability_types["tosca.capabilities.Endpoint"].properties["network_name"].default
+            $value: PRIVATE
+            $type: string
+          protocol:
+            $description: 'The name of the protocol (i.e., the protocol prefix) that
+              the endpoint accepts (any OSI Layer 4-7 protocols). Examples: http,
+              https, ftp, tcp, udp, etc.'
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: internal:/tosca/simple/1.3/capabilities.yaml
+                row: 134
+                column: 9
+                path: capability_types["tosca.capabilities.Endpoint"].properties["protocol"].default
+            $value: tcp
+            $type: string
+          secure:
+            $description: Requests for the endpoint to be secure and use credentials
+              supplied on the ConnectsTo relationship.
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!bool'
+                url: internal:/tosca/simple/1.3/capabilities.yaml
+                row: 145
+                column: 9
+                path: capability_types["tosca.capabilities.Endpoint"].properties["secure"].default
+            $value: false
+            $type: boolean
+        attributes:
+          ip_address:
+            $description: 'Note: This is the IP address as propagated up by the associated
+              node''s host (Compute) container.'
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G
+                  Riders 2020\github_files\gsma-gst\tosca\connectivity.yml
+                row: 87
+                column: 5
+                path: topology_template.node_templates["my_fixed_connection"].capabilities["a_end"].attributes["ip_address"]
+            $value: null
+            $type: string
+        minRelationshipCount: 0
+        maxRelationshipCount: -1
+      feature:
+        description: ""
+        types:
+          tosca::Node:
+            description: The Node capability indicates the base capabilities of a
+              TOSCA Node Type.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.2
+              normative: "true"
+            parent: tosca::Root
+          tosca::Root:
+            description: This is the default (root) TOSCA Capability Type definition
+              that all other TOSCA Capability Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.1
+              normative: "true"
+        properties: {}
+        attributes: {}
+        minRelationshipCount: 0
+        maxRelationshipCount: -1
+      z-end:
+        description: ""
+        types:
+          tosca::Endpoint:
+            description: This is the default TOSCA type that should be used or extended
+              to define a network endpoint capability. This includes the information
+              to express a basic endpoint with a single port or a complex endpoint
+              with multiple ports. By default the Endpoint is assumed to represent
+              an address on a private network unless otherwise specified.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.7
+              normative: "true"
+            parent: tosca::Root
+          tosca::Root:
+            description: This is the default (root) TOSCA Capability Type definition
+              that all other TOSCA Capability Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.1
+              normative: "true"
+        properties:
+          initiator:
+            $description: The optional indicator of the direction of the connection.
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: internal:/tosca/simple/1.3/capabilities.yaml
+                row: 170
+                column: 9
+                path: capability_types["tosca.capabilities.Endpoint"].properties["initiator"].default
+            $value: source
+            $type: string
+          network_name:
+            $description: 'The optional name (or ID) of the network this endpoint
+              should be bound to. network_name: PRIVATE | PUBLIC | <network_name>
+              | <network_id>.'
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: internal:/tosca/simple/1.3/capabilities.yaml
+                row: 162
+                column: 9
+                path: capability_types["tosca.capabilities.Endpoint"].properties["network_name"].default
+            $value: PRIVATE
+            $type: string
+          protocol:
+            $description: 'The name of the protocol (i.e., the protocol prefix) that
+              the endpoint accepts (any OSI Layer 4-7 protocols). Examples: http,
+              https, ftp, tcp, udp, etc.'
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: internal:/tosca/simple/1.3/capabilities.yaml
+                row: 134
+                column: 9
+                path: capability_types["tosca.capabilities.Endpoint"].properties["protocol"].default
+            $value: tcp
+            $type: string
+          secure:
+            $description: Requests for the endpoint to be secure and use credentials
+              supplied on the ConnectsTo relationship.
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!bool'
+                url: internal:/tosca/simple/1.3/capabilities.yaml
+                row: 145
+                column: 9
+                path: capability_types["tosca.capabilities.Endpoint"].properties["secure"].default
+            $value: false
+            $type: boolean
+        attributes:
+          ip_address:
+            $description: 'Note: This is the IP address as propagated up by the associated
+              node''s host (Compute) container.'
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G
+                  Riders 2020\github_files\gsma-gst\tosca\connectivity.yml
+                row: 87
+                column: 5
+                path: topology_template.node_templates["my_fixed_connection"].capabilities["z-end"].attributes["ip_address"]
+            $value: null
+            $type: string
+        minRelationshipCount: 0
+        maxRelationshipCount: -1
+    interfaces: {}
+    artifacts: {}
+  my_wireless_connection:
+    description: ""
+    types:
+      nodes.org.tmforum.models.sidmodels:
+        metadata:
+          sid_release: "19.0"
+      nodes.org.tmforum.models.sidmodels.ResourceDomain:
+        metadata:
+          sid_release: "19.0"
+        parent: nodes.org.tmforum.models.sidmodels
+      nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE:
+        metadata:
+          sid_release: "19.0"
+        parent: nodes.org.tmforum.models.sidmodels.ResourceDomain
+      nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE:
+        metadata:
+          sid_release: "19.0"
+        parent: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE
+      nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction:
+        metadata:
+          sid_release: "19.0"
+        parent: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE
+      wireless_connection:
+        description: connection between two endpoints over a wireless connection
+        parent: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction
+    directives: []
+    properties: {}
+    attributes:
+      wireless_connection_id:
+        $constraints:
+        - $functionCall:
+            name: tosca.constraint._primitive
+            arguments:
+            - $value: '!!int'
+            url: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G
+              Riders 2020\github_files\gsma-gst\tosca\connectivity.yml
+            row: 90
+            column: 5
+            path: topology_template.node_templates["my_wireless_connection"].attributes["wireless_connection_id"]
+        $value: null
+        $type: integer
+    requirements:
+    - name: slice
+      capabilityTypeName: sliceType
+      capabilityName: ""
+      nodeTypeName: 5G_slice
+      nodeTemplateName: ""
+      nodeTemplatePropertyConstraints: {}
+      capabilityPropertyConstraints: {}
+      relationship:
+        description: This type represents a general dependency relationship between
+          two nodes.
+        types:
+          tosca::DependsOn:
+            description: This type represents a general dependency relationship between
+              two nodes.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.7.2
+              normative: "true"
+            parent: tosca::Root
+          tosca::Root:
+            description: This is the default (root) TOSCA Relationship Type definition
+              that all other TOSCA Relationship Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.7.1
+              normative: "true"
+        properties: {}
+        attributes:
+          state:
+            $description: The state of the relationship instance.
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: internal:/tosca/simple/1.3/relationships.yaml
+                row: 36
+                column: 9
+                path: relationship_types["tosca.relationships.Root"].attributes["state"].default
+            $value: initial
+            $type: string
+          tosca_id:
+            $description: A unique identifier of the realized instance of a Relationship
+              Template that derives from any TOSCA normative type.
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G
+                  Riders 2020\github_files\gsma-gst\tosca\connectivity.yml
+                row: 93
+                column: 11
+                path: topology_template.node_templates["my_wireless_connection"].requirements[0].relationship.attributes["tosca_id"]
+            $value: null
+            $type: string
+          tosca_name:
+            $description: This attribute reflects the name of the Relationship Template
+              as defined in the TOSCA service template. This name is not unique to
+              the realized instance model of corresponding deployed application as
+              each template in the model can result in one or more instances (e.g.,
+              scaled) when orchestrated to a provider environment.
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G
+                  Riders 2020\github_files\gsma-gst\tosca\connectivity.yml
+                row: 93
+                column: 11
+                path: topology_template.node_templates["my_wireless_connection"].requirements[0].relationship.attributes["tosca_name"]
+            $value: null
+            $type: string
+        interfaces:
+          Configure:
+            description: The lifecycle interfaces define the essential, normative
+              operations that each TOSCA Relationship Types may support.
+            types:
+              tosca::Configure:
+                description: The lifecycle interfaces define the essential, normative
+                  operations that each TOSCA Relationship Types may support.
+                metadata:
+                  citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+                  citation_location: 5.8.5
+                  normative: "true"
+                parent: tosca::Root
+              tosca::Root:
+                description: This is the default (root) TOSCA Interface Type definition
+                  that all other TOSCA Interface Types derive from.
+                metadata:
+                  citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+                  citation_location: 5.8.3
+                  normative: "true"
+            inputs: {}
+            operations:
+              add_source:
+                description: Operation to notify the target node of a source node
+                  which is now available via a relationship.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              add_target:
+                description: Operation to notify the source node of a target node
+                  being added via a relationship.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              post_configure_source:
+                description: Operation to post-configure the source endpoint.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              post_configure_target:
+                description: Operation to post-configure the target endpoint.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              pre_configure_source:
+                description: Operation to pre-configure the source endpoint.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              pre_configure_target:
+                description: Operation to pre-configure the target endpoint.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              remove_source:
+                description: Operation to remove the source node.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              remove_target:
+                description: Operation to remove a target node.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              target_changed:
+                description: Operation to notify source some property or attribute
+                  of the target changed
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+            notifications: {}
+      path: topology_template.node_templates["my_wireless_connection"].requirements[0]
+    capabilities:
+      a_end:
+        description: ""
+        types:
+          tosca::Endpoint:
+            description: This is the default TOSCA type that should be used or extended
+              to define a network endpoint capability. This includes the information
+              to express a basic endpoint with a single port or a complex endpoint
+              with multiple ports. By default the Endpoint is assumed to represent
+              an address on a private network unless otherwise specified.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.7
+              normative: "true"
+            parent: tosca::Root
+          tosca::Root:
+            description: This is the default (root) TOSCA Capability Type definition
+              that all other TOSCA Capability Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.1
+              normative: "true"
+        properties:
+          initiator:
+            $description: The optional indicator of the direction of the connection.
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: internal:/tosca/simple/1.3/capabilities.yaml
+                row: 170
+                column: 9
+                path: capability_types["tosca.capabilities.Endpoint"].properties["initiator"].default
+            $value: source
+            $type: string
+          network_name:
+            $description: 'The optional name (or ID) of the network this endpoint
+              should be bound to. network_name: PRIVATE | PUBLIC | <network_name>
+              | <network_id>.'
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: internal:/tosca/simple/1.3/capabilities.yaml
+                row: 162
+                column: 9
+                path: capability_types["tosca.capabilities.Endpoint"].properties["network_name"].default
+            $value: PRIVATE
+            $type: string
+          protocol:
+            $description: 'The name of the protocol (i.e., the protocol prefix) that
+              the endpoint accepts (any OSI Layer 4-7 protocols). Examples: http,
+              https, ftp, tcp, udp, etc.'
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: internal:/tosca/simple/1.3/capabilities.yaml
+                row: 134
+                column: 9
+                path: capability_types["tosca.capabilities.Endpoint"].properties["protocol"].default
+            $value: tcp
+            $type: string
+          secure:
+            $description: Requests for the endpoint to be secure and use credentials
+              supplied on the ConnectsTo relationship.
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!bool'
+                url: internal:/tosca/simple/1.3/capabilities.yaml
+                row: 145
+                column: 9
+                path: capability_types["tosca.capabilities.Endpoint"].properties["secure"].default
+            $value: false
+            $type: boolean
+        attributes:
+          ip_address:
+            $description: 'Note: This is the IP address as propagated up by the associated
+              node''s host (Compute) container.'
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G
+                  Riders 2020\github_files\gsma-gst\tosca\connectivity.yml
+                row: 90
+                column: 5
+                path: topology_template.node_templates["my_wireless_connection"].capabilities["a_end"].attributes["ip_address"]
+            $value: null
+            $type: string
+        minRelationshipCount: 0
+        maxRelationshipCount: -1
+      feature:
+        description: ""
+        types:
+          tosca::Node:
+            description: The Node capability indicates the base capabilities of a
+              TOSCA Node Type.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.2
+              normative: "true"
+            parent: tosca::Root
+          tosca::Root:
+            description: This is the default (root) TOSCA Capability Type definition
+              that all other TOSCA Capability Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.1
+              normative: "true"
+        properties: {}
+        attributes: {}
+        minRelationshipCount: 0
+        maxRelationshipCount: -1
+      z-end:
+        description: ""
+        types:
+          tosca::Endpoint:
+            description: This is the default TOSCA type that should be used or extended
+              to define a network endpoint capability. This includes the information
+              to express a basic endpoint with a single port or a complex endpoint
+              with multiple ports. By default the Endpoint is assumed to represent
+              an address on a private network unless otherwise specified.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.7
+              normative: "true"
+            parent: tosca::Root
+          tosca::Root:
+            description: This is the default (root) TOSCA Capability Type definition
+              that all other TOSCA Capability Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.1
+              normative: "true"
+        properties:
+          initiator:
+            $description: The optional indicator of the direction of the connection.
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: internal:/tosca/simple/1.3/capabilities.yaml
+                row: 170
+                column: 9
+                path: capability_types["tosca.capabilities.Endpoint"].properties["initiator"].default
+            $value: source
+            $type: string
+          network_name:
+            $description: 'The optional name (or ID) of the network this endpoint
+              should be bound to. network_name: PRIVATE | PUBLIC | <network_name>
+              | <network_id>.'
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: internal:/tosca/simple/1.3/capabilities.yaml
+                row: 162
+                column: 9
+                path: capability_types["tosca.capabilities.Endpoint"].properties["network_name"].default
+            $value: PRIVATE
+            $type: string
+          protocol:
+            $description: 'The name of the protocol (i.e., the protocol prefix) that
+              the endpoint accepts (any OSI Layer 4-7 protocols). Examples: http,
+              https, ftp, tcp, udp, etc.'
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: internal:/tosca/simple/1.3/capabilities.yaml
+                row: 134
+                column: 9
+                path: capability_types["tosca.capabilities.Endpoint"].properties["protocol"].default
+            $value: tcp
+            $type: string
+          secure:
+            $description: Requests for the endpoint to be secure and use credentials
+              supplied on the ConnectsTo relationship.
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!bool'
+                url: internal:/tosca/simple/1.3/capabilities.yaml
+                row: 145
+                column: 9
+                path: capability_types["tosca.capabilities.Endpoint"].properties["secure"].default
+            $value: false
+            $type: boolean
+        attributes:
+          ip_address:
+            $description: 'Note: This is the IP address as propagated up by the associated
+              node''s host (Compute) container.'
+            $constraints:
+            - $functionCall:
+                name: tosca.constraint._primitive
+                arguments:
+                - $value: '!!str'
+                url: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G
+                  Riders 2020\github_files\gsma-gst\tosca\connectivity.yml
+                row: 90
+                column: 5
+                path: topology_template.node_templates["my_wireless_connection"].capabilities["z-end"].attributes["ip_address"]
+            $value: null
+            $type: string
+        minRelationshipCount: 0
+        maxRelationshipCount: -1
+    interfaces: {}
+    artifacts: {}
+groups: {}
+policies:
+  wireless_connection_affinity:
+    description: Keep all instances of my_wireless_connection on a single instance
+      of cs_csms_slice
+    types:
+      tosca.policies.Placement.Colocate:
+        parent: tosca::Placement
+      tosca::Placement:
+        description: This is the default (root) TOSCA Policy Type definition that
+          is used to govern placement of TOSCA nodes or groups of nodes.
+        metadata:
+          citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+          citation_location: 5.11.2
+          normative: "true"
+        parent: tosca::Root
+      tosca::Root:
+        description: This is the default (root) TOSCA Policy Type definition that
+          all other TOSCA base Policy Types derive from.
+        metadata:
+          citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+          citation_location: 5.11.1
+          normative: "true"
+    properties:
+      affinity:
+        $constraints:
+        - $functionCall:
+            name: tosca.constraint._primitive
+            arguments:
+            - $value: '!!str'
+            url: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G
+              Riders 2020\github_files\gsma-gst\tosca\connectivity.yml
+            row: 113
+            column: 7
+            path: topology_template.policies[0].properties["affinity"]
+        $value: cs_csms_slice
+        $type: string
+inputs: {}
+outputs: {}
+workflows: {}
+substitution: null
+metadata:
+  template_author: paul.m.jordan@bt.com
+  template_name: CS to CSMS connectivity
+  template_version: "4.0"
+scriptletNamespace:
+  tosca.coerce:
+    origin:
+      path: /tosca/simple/1.3
+      content: ""
+    path: internal:/tosca/common/1.0/js/coerce.js
+    scriptlet: ""
+    nativeArgumentIndexes: []
+  tosca.comparer.version:
+    origin:
+      path: /tosca/simple/1.3
+      content: ""
+    path: internal:/tosca/simple/1.3/js/comparers/version.js
+    scriptlet: ""
+    nativeArgumentIndexes: []
+  tosca.constraint._format:
+    origin:
+      path: /tosca/simple/1.3
+      content: ""
+    path: internal:/tosca/simple/1.3/js/constraints/_format.js
+    scriptlet: ""
+    nativeArgumentIndexes: []
+  tosca.constraint._primitive:
+    origin:
+      path: /tosca/simple/1.3
+      content: ""
+    path: internal:/tosca/simple/1.3/js/constraints/_primitive.js
+    scriptlet: ""
+    nativeArgumentIndexes: []
+  tosca.constraint.equal:
+    origin: null
+    path: ""
+    scriptlet: |-
+      // [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.2
+      // [TOSCA-Simple-Profile-YAML-v1.0] @ 3.5.2
+
+      clout.exec('tosca.lib.utils');
+
+      function validate(v1, v2) {
+        if (arguments.length !== 2)
+          throw 'must have 1 argument';
+        return tosca.compare(v1, v2) === 0;
+      }
+    nativeArgumentIndexes:
+    - 0
+  tosca.constraint.greater_or_equal:
+    origin: null
+    path: ""
+    scriptlet: |-
+      // [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.2
+      // [TOSCA-Simple-Profile-YAML-v1.0] @ 3.5.2
+
+      clout.exec('tosca.lib.utils');
+
+      function validate(v1, v2) {
+        if (arguments.length !== 2)
+          throw 'must have 1 argument';
+        return tosca.compare(v1, v2) >= 0;
+      }
+    nativeArgumentIndexes:
+    - 0
+  tosca.constraint.greater_than:
+    origin: null
+    path: ""
+    scriptlet: |-
+      // [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.2
+      // [TOSCA-Simple-Profile-YAML-v1.0] @ 3.5.2
+
+      clout.exec('tosca.lib.utils');
+
+      function validate(v1, v2) {
+        if (arguments.length !== 2)
+          throw 'must have 1 argument';
+        return tosca.compare(v1, v2) > 0;
+      }
+    nativeArgumentIndexes:
+    - 0
+  tosca.constraint.in_range:
+    origin: null
+    path: ""
+    scriptlet: |-
+      // [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.2
+      // [TOSCA-Simple-Profile-YAML-v1.0] @ 3.5.2
+
+      clout.exec('tosca.lib.utils');
+
+      function validate(v, lower, upper) {
+        if (arguments.length !== 3)
+          throw 'must have 2 arguments';
+        return (tosca.compare(v, lower) >= 0) && (tosca.compare(v, upper) <= 0);
+      }
+    nativeArgumentIndexes:
+    - 0
+    - 1
+  tosca.constraint.length:
+    origin: null
+    path: ""
+    scriptlet: |-
+      // [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.2
+      // [TOSCA-Simple-Profile-YAML-v1.0] @ 3.5.2
+
+      function validate(v, length) {
+        if (arguments.length !== 2)
+          throw 'must have 1 argument';
+        if (v.$string !== undefined)
+          v = v.$string;
+        return v.length == length;
+      }
+    nativeArgumentIndexes: []
+  tosca.constraint.less_or_equal:
+    origin: null
+    path: ""
+    scriptlet: |-
+      // [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.2
+      // [TOSCA-Simple-Profile-YAML-v1.0] @ 3.5.2
+
+      clout.exec('tosca.lib.utils');
+
+      function validate(v1, v2) {
+        if (arguments.length !== 2)
+          throw 'must have 1 argument';
+        return tosca.compare(v1, v2) <= 0;
+      }
+    nativeArgumentIndexes:
+    - 0
+  tosca.constraint.less_than:
+    origin: null
+    path: ""
+    scriptlet: |-
+      // [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.2
+      // [TOSCA-Simple-Profile-YAML-v1.0] @ 3.5.2
+
+      clout.exec('tosca.lib.utils');
+
+      function validate(v1, v2) {
+        if (arguments.length !== 2)
+          throw 'must have 1 argument';
+        return tosca.compare(v1, v2) < 0;
+      }
+    nativeArgumentIndexes:
+    - 0
+  tosca.constraint.max_length:
+    origin: null
+    path: ""
+    scriptlet: |-
+      // [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.2
+      // [TOSCA-Simple-Profile-YAML-v1.0] @ 3.5.2
+
+      function validate(v, length) {
+        if (arguments.length !== 2)
+          throw 'must have 1 argument';
+        if (v.$string !== undefined)
+          v = v.$string;
+        return v.length <= length;
+      }
+    nativeArgumentIndexes: []
+  tosca.constraint.min_length:
+    origin: null
+    path: ""
+    scriptlet: |-
+      // [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.2
+      // [TOSCA-Simple-Profile-YAML-v1.0] @ 3.5.2
+
+      function validate(v, length) {
+        if (arguments.length !== 2)
+          throw 'must have 1 argument';
+        if (v.$string !== undefined)
+          v = v.$string;
+        return v.length >= length;
+      }
+    nativeArgumentIndexes: []
+  tosca.constraint.pattern:
+    origin: null
+    path: ""
+    scriptlet: |-
+      // [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.2
+      // [TOSCA-Simple-Profile-YAML-v1.0] @ 3.5.2
+
+      function validate(v, re) {
+        if (arguments.length !== 2)
+          throw 'must have 1 argument';
+        if (v.$string !== undefined)
+          v = v.$string;
+        return new RegExp('^' + re + '$').test(v);
+      }
+    nativeArgumentIndexes: []
+  tosca.constraint.schema:
+    origin: null
+    path: ""
+    scriptlet: |-
+      // [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
+
+      function validate() {
+        // TODO
+        return true;
+      }
+    nativeArgumentIndexes: []
+  tosca.constraint.valid_values:
+    origin: null
+    path: ""
+    scriptlet: |-
+      // [TOSCA-Simple-Profile-YAML-v1.3] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.1] @ 3.5.2
+      // [TOSCA-Simple-Profile-YAML-v1.0] @ 3.5.2
+
+      function validate(v) {
+        var values = Array.prototype.slice.call(arguments, 1);
+        return values.indexOf(v) !== -1;
+      }
+    nativeArgumentIndexes: []
+  tosca.function.concat:
+    origin: null
+    path: ""
+    scriptlet: |-
+      // [TOSCA-Simple-Profile-YAML-v1.3] @ 4.3.1
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.3.1
+      // [TOSCA-Simple-Profile-YAML-v1.1] @ 4.3.1
+      // [TOSCA-Simple-Profile-YAML-v1.0] @ 4.3.1
+
+      function evaluate() {
+        var a = [];
+        var length = arguments.length;
+        for (var i = 0; i < length; i++) {
+          var argument = arguments[i];
+          if (argument.$string !== undefined)
+            argument = argument.$string;
+          a.push(argument);
+        }
+        return a.join('');
+      }
+    nativeArgumentIndexes: []
+  tosca.function.get_artifact:
+    origin: null
+    path: ""
+    scriptlet: |-
+      // [TOSCA-Simple-Profile-YAML-v1.3] @ 4.8.1
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.8.1
+      // [TOSCA-Simple-Profile-YAML-v1.1] @ 4.8.1
+      // [TOSCA-Simple-Profile-YAML-v1.0] @ 4.8.1
+
+      function evaluate() {
+        return 'TODO';
+      }
+    nativeArgumentIndexes: []
+  tosca.function.get_attribute:
+    origin: null
+    path: ""
+    scriptlet: |-
+      // [TOSCA-Simple-Profile-YAML-v1.3] @ 4.5.1
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.5.1
+      // [TOSCA-Simple-Profile-YAML-v1.1] @ 4.5.1
+      // [TOSCA-Simple-Profile-YAML-v1.0] @ 4.5.1
+
+      clout.exec('tosca.lib.utils');
+
+      function evaluate(entity, first) {
+        return tosca.getNestedValue('attribute', 'attributes', arguments);
+      }
+    nativeArgumentIndexes: []
+  tosca.function.get_input:
+    origin: null
+    path: ""
+    scriptlet: |-
+      // [TOSCA-Simple-Profile-YAML-v1.3] @ 4.4.1
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.4.1
+      // [TOSCA-Simple-Profile-YAML-v1.1] @ 4.4.1
+      // [TOSCA-Simple-Profile-YAML-v1.0] @ 4.4.1
+
+      clout.exec('tosca.lib.utils');
+
+      function evaluate(input) {
+        if (arguments.length !== 1)
+          throw 'must have 1 argument';
+        if (!tosca.isTosca(clout))
+          throw 'Clout is not TOSCA';
+        var inputs = clout.properties.tosca.inputs;
+        if (!(input in inputs))
+          throw puccini.sprintf('input "%s" not found', input);
+        var r = inputs[input];
+        r = clout.coerce(r);
+        return r;
+      }
+    nativeArgumentIndexes: []
+  tosca.function.get_nodes_of_type:
+    origin: null
+    path: ""
+    scriptlet: |-
+      // [TOSCA-Simple-Profile-YAML-v1.3] @ 4.7.1
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.7.1
+      // [TOSCA-Simple-Profile-YAML-v1.1] @ 4.7.1
+      // [TOSCA-Simple-Profile-YAML-v1.0] @ 4.7.1
+
+      clout.exec('tosca.lib.utils');
+
+      function evaluate(typeName) {
+        if (arguments.length !== 1)
+          throw 'must have 1 argument';
+        var names = [];
+        for (var id in clout.vertexes) {
+          var vertex = clout.vertexes[id];
+          if (tosca.isTosca(vertex))
+            names.push(vertex.properties.name);
+        }
+        return names;
+      }
+    nativeArgumentIndexes: []
+  tosca.function.get_operation_output:
+    origin: null
+    path: ""
+    scriptlet: |-
+      // [TOSCA-Simple-Profile-YAML-v1.3] @ 4.6.1
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.6.1
+      // [TOSCA-Simple-Profile-YAML-v1.1] @ 4.6.1
+      // [TOSCA-Simple-Profile-YAML-v1.0] @ 4.6.1
+
+      function evaluate() {
+        return 'TODO';
+      }
+    nativeArgumentIndexes: []
+  tosca.function.get_property:
+    origin: null
+    path: ""
+    scriptlet: |-
+      // [TOSCA-Simple-Profile-YAML-v1.3] @ 4.4.2
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.4.2
+      // [TOSCA-Simple-Profile-YAML-v1.1] @ 4.4.2
+      // [TOSCA-Simple-Profile-YAML-v1.0] @ 4.4.2
+
+      clout.exec('tosca.lib.utils');
+
+      function evaluate() {
+        return tosca.getNestedValue('property', 'properties', arguments);
+      }
+    nativeArgumentIndexes: []
+  tosca.function.join:
+    origin: null
+    path: ""
+    scriptlet: |-
+      // [TOSCA-Simple-Profile-YAML-v1.3] @ 4.3.2
+
+      function evaluate() {
+        var length = arguments.length;
+        if ((length < 1) || (length > 2))
+          throw 'must have 1 or 2 arguments';
+        var delimiter = (length == 2) ? arguments[1] : '';
+        var args = arguments[0];
+        length = args.length;
+        var a = [];
+        for (var i = 0; i < length; i++) {
+          var argument = args[i];
+          if (argument.$string !== undefined)
+            argument = argument.$string;
+          a.push(argument);
+        }
+        return a.join(delimiter);
+      }
+    nativeArgumentIndexes: []
+  tosca.function.token:
+    origin: null
+    path: ""
+    scriptlet: |-
+      // [TOSCA-Simple-Profile-YAML-v1.3] @ 4.3.3
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.3.3
+      // [TOSCA-Simple-Profile-YAML-v1.1] @ 4.3.2
+      // [TOSCA-Simple-Profile-YAML-v1.0] @ 4.3.2
+
+      function evaluate(v, separators, index) {
+        if (arguments.length !== 3)
+          throw 'must have 3 arguments';
+        if (v.$string !== undefined)
+          v = v.$string;
+        var s = v.split(new RegExp('[' + escape(separators) + ']'));
+        return s[index];
+      }
+
+      function escape(s) {
+        return s.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
+      }
+    nativeArgumentIndexes: []
+  tosca.lib.coerce:
+    origin:
+      path: /tosca/simple/1.3
+      content: ""
+    path: internal:/tosca/common/1.0/js/lib/coerce.js
+    scriptlet: ""
+    nativeArgumentIndexes: []
+  tosca.lib.utils:
+    origin:
+      path: /tosca/simple/1.3
+      content: ""
+    path: internal:/tosca/common/1.0/js/lib/utils.js
+    scriptlet: ""
+    nativeArgumentIndexes: []
+  tosca.resolve:
+    origin:
+      path: /tosca/simple/1.3
+      content: ""
+    path: internal:/tosca/common/1.0/js/resolve.js
+    scriptlet: ""
+    nativeArgumentIndexes: []

@@ -7,12 +7,7 @@ metadata:
   template_author: paul.m.jordan@bt.com
   template_version: '1.0'
   # look for syntax error with the command below
-  parse_command: puccini-tosca parse "tosca/mec_hosting_enablement.wheresmychargingpoint.com.yml" -i targetComputeAdminAddress="10.10.10.10" -i public_app_address="1.1.1.1"> out.yml
-
-imports:
-  # This file makes this generic template become specific to a particular app
-  - file: wheresmychargepoint.yml # This will have been populated from a jinja2 field 
-
+  parse_command: puccini-tosca parse "tosca/mec_hosting_enablement.wheresmychargingpoint.com.yml" -i targetComputeAdminAddress="10.10.10.10" -i public_app_address="1.1.1.1"> out.ymlparse_command: puccini-tosca parse "tosca/mec_hosting_enablement.wheresmychargingpoint.com.yml" -i targetComputeAdminAddress="10.10.10.10" -i public_app_address="1.1.1.1"> out.yml  
 capability_types:
   MECManager:
     derived_from: tosca.capabilities.Node

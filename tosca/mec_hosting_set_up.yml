@@ -7,8 +7,7 @@ metadata:
   template_author: paul.m.jordan@bt.com
   template_version: '1.0'
   # look for syntax error with the command below
-  parse_command: puccini-tosca parse "tosca/mec_hosting_set_up.yml" -i app_image_file="http://cloudrepo:80/files/wheresmychargepointapp.iso" -i app_state_data="data_url" -i app_public_url="wheresmychargepointapp/com" > out.yml
-
+  parse_command: puccini-tosca parse "tosca/mec_hosting_enablement.wheresmychargingpoint.com.yml" -n tosca/mec_hosting_set_up_inputs.yml
 
 node_types:
   hosted_app_type:
@@ -26,13 +25,13 @@ node_types:
                 type: string
 
 topology_template:
-  inputs:
+  inputs: # This might be better as a structure 
     app_image_file: 
-      type: string #http://cloudrepo:80/files/wheresmychargepointapp.iso # This will have been populated from a jinja2 field
+      type: string 
     app_state_data: 
-      type: string #http://livelocation.com/heresmychargepointapp/operationalstate.json # This will have been populated from a jinja2 field
+      type: string 
     app_public_url: 
-      type: string #wheresmychargepoint.com # This will have been populated from a jinja2 field
+      type: string 
 
   node_templates:
     myApp:

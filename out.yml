@@ -1,0 +1,884 @@
+description: A TOSCA template to deploy a specific app on a mec and direct requests
+  to it
+nodeTemplates:
+  mecs_controlling_smf:
+    description: ""
+    types:
+      smf_type:
+        parent: tosca::Root
+      tosca::Root:
+        description: The TOSCA Root Node Type is the default type that all other TOSCA
+          base Node Types derive from. This allows for all TOSCA nodes to have a consistent
+          set of features for modeling and management (e.g., consistent definitions
+          for requirements, capabilities and lifecycle interfaces).
+        metadata:
+          citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+          citation_location: 5.9.1
+          normative: "true"
+    directives:
+    - select
+    properties: {}
+    attributes: {}
+    requirements: []
+    capabilities:
+      manage_mecs:
+        description: ""
+        types:
+          MECManager:
+            parent: tosca::Node
+          tosca::Node:
+            description: The Node capability indicates the base capabilities of a
+              TOSCA Node Type.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.2
+              normative: "true"
+            parent: tosca::Root
+          tosca::Root:
+            description: This is the default (root) TOSCA Capability Type definition
+              that all other TOSCA Capability Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.1
+              normative: "true"
+        properties: {}
+        attributes: {}
+        minRelationshipCount: 0
+        maxRelationshipCount: -1
+    interfaces:
+      smf_management:
+        description: ""
+        types:
+          smf_management:
+            parent: tosca::Root
+          tosca::Root:
+            description: This is the default (root) TOSCA Interface Type definition
+              that all other TOSCA Interface Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.8.3
+              normative: "true"
+        inputs: {}
+        operations:
+          redirect:
+            description: ""
+            implementation: ""
+            dependencies: []
+            inputs:
+              app_url:
+                $value: wheresmychargepoint.com
+                $type: string
+              public_app_address:
+                $functionCall:
+                  name: tosca.function.get_input
+                  arguments:
+                  - $value: public_app_address
+                  url: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G
+                    Riders 2020\github_files\gsma-gst\tosca\mec_hosting_enablement.wheresmychargingpoint.com.yml
+                  row: 126
+                  column: 17
+                  path: topology_template.node_templates["mecs_controlling_smf"].interfaces["smf_management"].operations["redirect"].inputs["public_app_address"]
+            timeout: -1
+            host: ""
+        notifications: {}
+    artifacts: {}
+  myApp:
+    description: ""
+    types:
+      hosted_app_type:
+        parent: tosca::SoftwareComponent
+      tosca::Root:
+        description: The TOSCA Root Node Type is the default type that all other TOSCA
+          base Node Types derive from. This allows for all TOSCA nodes to have a consistent
+          set of features for modeling and management (e.g., consistent definitions
+          for requirements, capabilities and lifecycle interfaces).
+        metadata:
+          citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+          citation_location: 5.9.1
+          normative: "true"
+      tosca::SoftwareComponent:
+        description: The TOSCA SoftwareComponent node represents a generic software
+          component that can be managed and run by a TOSCA Compute Node Type.
+        metadata:
+          citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+          citation_location: 5.9.4
+          normative: "true"
+        parent: tosca::Root
+    directives: []
+    properties: {}
+    attributes:
+      state:
+        $description: The state of the node instance.
+        $value: initial
+        $type: string
+      tosca_id:
+        $description: A unique identifier of the realized instance of a Node Template
+          that derives from any TOSCA normative type.
+        $value: null
+        $type: string
+      tosca_name:
+        $description: This attribute reflects the name of the Node Template as defined
+          in the TOSCA service template. This name is not unique to the realized instance
+          model of corresponding deployed application as each template in the model
+          can result in one or more instances (e.g., scaled) when orchestrated to
+          a provider environment.
+        $value: null
+        $type: string
+    requirements:
+    - name: host
+      capabilityTypeName: tosca::Compute
+      capabilityName: ""
+      nodeTypeName: tosca::Compute
+      nodeTemplateName: ""
+      nodeTemplatePropertyConstraints: {}
+      capabilityPropertyConstraints: {}
+      relationship:
+        description: This type represents a hosting relationship between two nodes.
+        types:
+          tosca::HostedOn:
+            description: This type represents a hosting relationship between two nodes.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.7.3
+              normative: "true"
+              role: host
+            parent: tosca::Root
+          tosca::Root:
+            description: This is the default (root) TOSCA Relationship Type definition
+              that all other TOSCA Relationship Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.7.1
+              normative: "true"
+        properties: {}
+        attributes:
+          state:
+            $description: The state of the relationship instance.
+            $value: initial
+            $type: string
+          tosca_id:
+            $description: A unique identifier of the realized instance of a Relationship
+              Template that derives from any TOSCA normative type.
+            $value: null
+            $type: string
+          tosca_name:
+            $description: This attribute reflects the name of the Relationship Template
+              as defined in the TOSCA service template. This name is not unique to
+              the realized instance model of corresponding deployed application as
+              each template in the model can result in one or more instances (e.g.,
+              scaled) when orchestrated to a provider environment.
+            $value: null
+            $type: string
+        interfaces:
+          Configure:
+            description: The lifecycle interfaces define the essential, normative
+              operations that each TOSCA Relationship Types may support.
+            types:
+              tosca::Configure:
+                description: The lifecycle interfaces define the essential, normative
+                  operations that each TOSCA Relationship Types may support.
+                metadata:
+                  citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+                  citation_location: 5.8.5
+                  normative: "true"
+                parent: tosca::Root
+              tosca::Root:
+                description: This is the default (root) TOSCA Interface Type definition
+                  that all other TOSCA Interface Types derive from.
+                metadata:
+                  citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+                  citation_location: 5.8.3
+                  normative: "true"
+            inputs: {}
+            operations:
+              add_source:
+                description: Operation to notify the target node of a source node
+                  which is now available via a relationship.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              add_target:
+                description: Operation to notify the source node of a target node
+                  being added via a relationship.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              post_configure_source:
+                description: Operation to post-configure the source endpoint.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              post_configure_target:
+                description: Operation to post-configure the target endpoint.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              pre_configure_source:
+                description: Operation to pre-configure the source endpoint.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              pre_configure_target:
+                description: Operation to pre-configure the target endpoint.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              remove_source:
+                description: Operation to remove the source node.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              remove_target:
+                description: Operation to remove a target node.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              target_changed:
+                description: Operation to notify source some property or attribute
+                  of the target changed
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+            notifications: {}
+      path: topology_template.node_templates["myApp"].requirements{0}
+    capabilities:
+      feature:
+        description: ""
+        types:
+          tosca::Node:
+            description: The Node capability indicates the base capabilities of a
+              TOSCA Node Type.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.2
+              normative: "true"
+            parent: tosca::Root
+          tosca::Root:
+            description: This is the default (root) TOSCA Capability Type definition
+              that all other TOSCA Capability Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.1
+              normative: "true"
+        properties: {}
+        attributes: {}
+        minRelationshipCount: 0
+        maxRelationshipCount: -1
+    interfaces:
+      Standard:
+        description: This lifecycle interface defines the essential, normative operations
+          that TOSCA nodes may support.
+        types:
+          tosca::Root:
+            description: This is the default (root) TOSCA Interface Type definition
+              that all other TOSCA Interface Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.8.3
+              normative: "true"
+          tosca::Standard:
+            description: This lifecycle interface defines the essential, normative
+              operations that TOSCA nodes may support.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.8.4
+              normative: "true"
+            parent: tosca::Root
+        inputs: {}
+        operations:
+          configure:
+            description: Standard lifecycle configure operation.
+            implementation: scripts/configure.sh
+            dependencies: []
+            inputs:
+              sync_data:
+                $functionCall:
+                  name: tosca.function.get_artifact
+                  arguments:
+                  - $value: SELF
+                  - $value: data
+                  url: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G
+                    Riders 2020\github_files\gsma-gst\tosca\mec_hosting_enablement.wheresmychargingpoint.com.yml
+                  row: 88
+                  column: 17
+                  path: topology_template.node_templates["myApp"].interfaces["Standard"].operations["configure"].inputs["sync_data"]
+            timeout: -1
+            host: ""
+          create:
+            description: Standard lifecycle create operation.
+            implementation: http://csp.com/hosted_app/scripts/create.sh
+            dependencies: []
+            inputs:
+              deployment_file:
+                $functionCall:
+                  name: tosca.function.get_artifact
+                  arguments:
+                  - $value: SELF
+                  - $value: mydeployment_file
+                  url: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G
+                    Riders 2020\github_files\gsma-gst\tosca\mec_hosting_enablement.wheresmychargingpoint.com.yml
+                  row: 84
+                  column: 17
+                  path: topology_template.node_templates["myApp"].interfaces["Standard"].operations["create"].inputs["deployment_file"]
+            timeout: -1
+            host: ""
+          delete:
+            description: Standard lifecycle delete operation.
+            implementation: ""
+            dependencies: []
+            inputs: {}
+            timeout: -1
+            host: ""
+          start:
+            description: Standard lifecycle start operation.
+            implementation: ""
+            dependencies: []
+            inputs: {}
+            timeout: -1
+            host: ""
+          stop:
+            description: Standard lifecycle stop operation.
+            implementation: ""
+            dependencies: []
+            inputs: {}
+            timeout: -1
+            host: ""
+        notifications: {}
+    artifacts:
+      data:
+        description: ""
+        types: {}
+        properties: {}
+        filename: operationalstate.json
+        sourcePath: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G
+          Riders 2020\github_files\gsma-gst\tosca\http:\livelocation.com\heresmychargepointapp\operationalstate.json
+        targetPath: ""
+        version: ""
+        checksumAlgorithm: ""
+        checksum: ""
+        credential: null
+      mydeployment_file:
+        description: The actual install file for this app
+        types: {}
+        properties: {}
+        filename: wheresmychargepointapp.iso
+        sourcePath: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G
+          Riders 2020\github_files\gsma-gst\tosca\http:\cloudrepo:80\files\wheresmychargepointapp.iso
+        targetPath: ""
+        version: ""
+        checksumAlgorithm: ""
+        checksum: ""
+        credential: null
+  myapp_compute:
+    description: ""
+    types:
+      mec_type:
+        parent: tosca::Compute
+      tosca::Abstract.Compute:
+        description: The TOSCA Abstract.Compute node represents an abstract compute
+          resource without any requirements on storage or network resources.
+        metadata:
+          citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+          citation_location: 5.9.2
+          normative: "true"
+        parent: tosca::Root
+      tosca::Compute:
+        description: The TOSCA Compute node represents one or more real or virtual
+          processors of software applications or services along with other essential
+          local resources. Collectively, the resources the compute node represents
+          can logically be viewed as a (real or virtual) "server".
+        metadata:
+          citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+          citation_location: 5.9.3
+          normative: "true"
+        parent: tosca::Abstract.Compute
+      tosca::Root:
+        description: The TOSCA Root Node Type is the default type that all other TOSCA
+          base Node Types derive from. This allows for all TOSCA nodes to have a consistent
+          set of features for modeling and management (e.g., consistent definitions
+          for requirements, capabilities and lifecycle interfaces).
+        metadata:
+          citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+          citation_location: 5.9.1
+          normative: "true"
+    directives: []
+    properties: {}
+    attributes:
+      networks:
+        $description: The list of logical networks assigned to the compute host instance
+          and information about them.
+        $value: null
+        $type: map
+      ports:
+        $description: The list of logical ports assigned to the compute host instance
+          and information about them.
+        $value: null
+        $type: map
+      private_address:
+        $description: The primary private IP address assigned by the cloud provider
+          that applications may use to access the Compute node.
+        $value: null
+        $type: string
+      public_address:
+        $description: The primary public IP address assigned by the cloud provider
+          that applications may use to access the Compute node.
+        $value: null
+        $type: string
+      state:
+        $description: The state of the node instance.
+        $value: initial
+        $type: string
+      tosca_id:
+        $description: A unique identifier of the realized instance of a Node Template
+          that derives from any TOSCA normative type.
+        $value: null
+        $type: string
+      tosca_name:
+        $description: This attribute reflects the name of the Node Template as defined
+          in the TOSCA service template. This name is not unique to the realized instance
+          model of corresponding deployed application as each template in the model
+          can result in one or more instances (e.g., scaled) when orchestrated to
+          a provider environment.
+        $value: null
+        $type: string
+    requirements:
+    - name: controlling_smf
+      capabilityTypeName: MECManager
+      capabilityName: ""
+      nodeTypeName: smf_type
+      nodeTemplateName: ""
+      nodeTemplatePropertyConstraints: {}
+      capabilityPropertyConstraints: {}
+      relationship:
+        description: This type represents a general dependency relationship between
+          two nodes.
+        types:
+          tosca::DependsOn:
+            description: This type represents a general dependency relationship between
+              two nodes.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.7.2
+              normative: "true"
+            parent: tosca::Root
+          tosca::Root:
+            description: This is the default (root) TOSCA Relationship Type definition
+              that all other TOSCA Relationship Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.7.1
+              normative: "true"
+        properties: {}
+        attributes:
+          state:
+            $description: The state of the relationship instance.
+            $value: initial
+            $type: string
+          tosca_id:
+            $description: A unique identifier of the realized instance of a Relationship
+              Template that derives from any TOSCA normative type.
+            $value: null
+            $type: string
+          tosca_name:
+            $description: This attribute reflects the name of the Relationship Template
+              as defined in the TOSCA service template. This name is not unique to
+              the realized instance model of corresponding deployed application as
+              each template in the model can result in one or more instances (e.g.,
+              scaled) when orchestrated to a provider environment.
+            $value: null
+            $type: string
+        interfaces:
+          Configure:
+            description: The lifecycle interfaces define the essential, normative
+              operations that each TOSCA Relationship Types may support.
+            types:
+              tosca::Configure:
+                description: The lifecycle interfaces define the essential, normative
+                  operations that each TOSCA Relationship Types may support.
+                metadata:
+                  citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+                  citation_location: 5.8.5
+                  normative: "true"
+                parent: tosca::Root
+              tosca::Root:
+                description: This is the default (root) TOSCA Interface Type definition
+                  that all other TOSCA Interface Types derive from.
+                metadata:
+                  citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+                  citation_location: 5.8.3
+                  normative: "true"
+            inputs: {}
+            operations:
+              add_source:
+                description: Operation to notify the target node of a source node
+                  which is now available via a relationship.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              add_target:
+                description: Operation to notify the source node of a target node
+                  being added via a relationship.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              post_configure_source:
+                description: Operation to post-configure the source endpoint.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              post_configure_target:
+                description: Operation to post-configure the target endpoint.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              pre_configure_source:
+                description: Operation to pre-configure the source endpoint.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              pre_configure_target:
+                description: Operation to pre-configure the target endpoint.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              remove_source:
+                description: Operation to remove the source node.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              remove_target:
+                description: Operation to remove a target node.
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+              target_changed:
+                description: Operation to notify source some property or attribute
+                  of the target changed
+                implementation: ""
+                dependencies: []
+                inputs: {}
+                timeout: -1
+                host: ""
+            notifications: {}
+      path: topology_template.node_templates["myapp_compute"].requirements{0}
+    capabilities:
+      binding:
+        description: ""
+        types:
+          tosca::Bindable:
+            description: A node type that includes the Bindable capability indicates
+              that it can be bound to a logical network association via a network
+              port.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.14
+              normative: "true"
+            parent: tosca::Node
+          tosca::Node:
+            description: The Node capability indicates the base capabilities of a
+              TOSCA Node Type.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.2
+              normative: "true"
+            parent: tosca::Root
+          tosca::Root:
+            description: This is the default (root) TOSCA Capability Type definition
+              that all other TOSCA Capability Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.1
+              normative: "true"
+        properties: {}
+        attributes: {}
+        minRelationshipCount: 0
+        maxRelationshipCount: -1
+      endpoint:
+        description: ""
+        types:
+          tosca::Endpoint:
+            description: This is the default TOSCA type that should be used or extended
+              to define a network endpoint capability. This includes the information
+              to express a basic endpoint with a single port or a complex endpoint
+              with multiple ports. By default the Endpoint is assumed to represent
+              an address on a private network unless otherwise specified.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.7
+              normative: "true"
+            parent: tosca::Root
+          tosca::Endpoint.Admin:
+            description: This is the default TOSCA type that should be used or extended
+              to define a specialized administrator endpoint capability.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.9
+              normative: "true"
+            parent: tosca::Endpoint
+          tosca::Root:
+            description: This is the default (root) TOSCA Capability Type definition
+              that all other TOSCA Capability Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.1
+              normative: "true"
+        properties:
+          initiator:
+            $description: The optional indicator of the direction of the connection.
+            $value: source
+            $type: string
+          network_name:
+            $description: 'The optional name (or ID) of the network this endpoint
+              should be bound to. network_name: PRIVATE | PUBLIC | <network_name>
+              | <network_id>.'
+            $value: PRIVATE
+            $type: string
+          protocol:
+            $description: 'The name of the protocol (i.e., the protocol prefix) that
+              the endpoint accepts (any OSI Layer 4-7 protocols). Examples: http,
+              https, ftp, tcp, udp, etc.'
+            $value: tcp
+            $type: string
+          secure:
+            $description: Requests for the endpoint to be secure and use credentials
+              supplied on the ConnectsTo relationship.
+            $value: true
+            $type: boolean
+        attributes:
+          ip_address:
+            $description: 'Note: This is the IP address as propagated up by the associated
+              node''s host (Compute) container.'
+            $value: null
+            $type: string
+        minRelationshipCount: 0
+        maxRelationshipCount: -1
+      feature:
+        description: ""
+        types:
+          tosca::Node:
+            description: The Node capability indicates the base capabilities of a
+              TOSCA Node Type.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.2
+              normative: "true"
+            parent: tosca::Root
+          tosca::Root:
+            description: This is the default (root) TOSCA Capability Type definition
+              that all other TOSCA Capability Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.1
+              normative: "true"
+        properties: {}
+        attributes: {}
+        minRelationshipCount: 0
+        maxRelationshipCount: -1
+      host:
+        description: ""
+        types:
+          tosca::Compute:
+            description: The Compute capability, when included on a Node Type or Template
+              definition, indicates that the node can provide hosting on a named compute
+              resource.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.3
+              normative: "true"
+              role: host
+            parent: tosca::Container
+          tosca::Container:
+            description: The Container capability, when included on a Node Type or
+              Template definition, indicates that the node can act as a container
+              for (or a host for) one or more other declared Node Types.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.6
+              normative: "true"
+            parent: tosca::Root
+          tosca::Root:
+            description: This is the default (root) TOSCA Capability Type definition
+              that all other TOSCA Capability Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.1
+              normative: "true"
+        properties: {}
+        attributes: {}
+        minRelationshipCount: 0
+        maxRelationshipCount: -1
+      os:
+        description: ""
+        types:
+          tosca::OperatingSystem:
+            description: This is the default TOSCA type that should be used to express
+              an Operating System capability for a node.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.12
+              normative: "true"
+            parent: tosca::Root
+          tosca::Root:
+            description: This is the default (root) TOSCA Capability Type definition
+              that all other TOSCA Capability Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.1
+              normative: "true"
+        properties: {}
+        attributes: {}
+        minRelationshipCount: 0
+        maxRelationshipCount: -1
+      scalable:
+        description: ""
+        types:
+          tosca::Root:
+            description: This is the default (root) TOSCA Capability Type definition
+              that all other TOSCA Capability Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.1
+              normative: "true"
+          tosca::Scalable:
+            description: This is the default TOSCA type that should be used to express
+              a scalability capability for a node.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.5.13
+              normative: "true"
+            parent: tosca::Root
+        properties:
+          max_instances:
+            $description: This property is used to indicate the maximum number of
+              instances that should be created for the associated TOSCA Node Template
+              by a TOSCA orchestrator.
+            $value: 1
+            $type: integer
+          min_instances:
+            $description: This property is used to indicate the minimum number of
+              instances that should be created for the associated TOSCA Node Template
+              by a TOSCA orchestrator.
+            $value: 1
+            $type: integer
+        attributes: {}
+        minRelationshipCount: 0
+        maxRelationshipCount: -1
+    interfaces:
+      Standard:
+        description: This lifecycle interface defines the essential, normative operations
+          that TOSCA nodes may support.
+        types:
+          tosca::Root:
+            description: This is the default (root) TOSCA Interface Type definition
+              that all other TOSCA Interface Types derive from.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.8.3
+              normative: "true"
+          tosca::Standard:
+            description: This lifecycle interface defines the essential, normative
+              operations that TOSCA nodes may support.
+            metadata:
+              citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              citation_location: 5.8.4
+              normative: "true"
+            parent: tosca::Root
+        inputs: {}
+        operations:
+          configure:
+            description: Standard lifecycle configure operation.
+            implementation: ""
+            dependencies: []
+            inputs: {}
+            timeout: -1
+            host: ""
+          create:
+            description: Standard lifecycle create operation.
+            implementation: ""
+            dependencies: []
+            inputs: {}
+            timeout: -1
+            host: ""
+          delete:
+            description: Standard lifecycle delete operation.
+            implementation: ""
+            dependencies: []
+            inputs: {}
+            timeout: -1
+            host: ""
+          start:
+            description: Standard lifecycle start operation.
+            implementation: ""
+            dependencies: []
+            inputs: {}
+            timeout: -1
+            host: ""
+          stop:
+            description: Standard lifecycle stop operation.
+            implementation: ""
+            dependencies: []
+            inputs: {}
+            timeout: -1
+            host: ""
+        notifications: {}
+    artifacts: {}
+groups: {}
+policies: {}
+inputs:
+  public_app_address:
+    $value: 1.1.1.1
+    $type: string
+  targetComputeAdminAddress:
+    $value: 10.10.10.10
+    $type: string
+outputs: {}
+workflows:
+  deploy:
+    description: ""
+    preconditions: []
+    steps:
+      install: {}
+      redirect: {}
+      sync: {}
+    inputs: {}
+substitution: null
+metadata:
+  parse_command: puccini-tosca parse "tosca/mec_hosting_enablement.wheresmychargingpoint.com.yml"
+  template_author: paul.m.jordan@bt.com
+  template_name: generic_app
+  template_version: "1.0"
+scriptletNamespace: {}
