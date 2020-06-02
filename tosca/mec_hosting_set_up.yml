@@ -17,21 +17,35 @@ node_types:
         operations:
           create:
             inputs:
-              image_file:
-                type: string
-              state_data: 
-                type: string
-              public_url:
-                type: string
+              app_defn:
+                type: json
 
 topology_template:
-  inputs: # This might be better as a structure 
-    app_image_file: 
-      type: string 
-    app_state_data: 
-      type: string 
-    app_public_url: 
-      type: string 
+  inputs:
+    app_defn:
+      type: json
+      constraints:
+        - schema: {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "title": "app data",
+            "description": "An app for possible deployment to a MEC",
+            "type": "object",
+            "properties": {
+                "app_image_file": {
+                  "description": "URL, where to get the deployment image",
+                  "type": "string"
+                },
+                "app_state_data": {
+                  "description": "URL, where to get any state data",
+                  "type": "string"
+                },
+                "app_public_url": {
+                  "description": "The url the public use to get to the app",
+                  "type": "string"
+                }
+            },
+            "required": ["app_image_file", "app_state_data", "app_public_url"]
+          }
 
   node_templates:
     myApp:
@@ -42,6 +56,4 @@ topology_template:
             create:
               implementation: create_enablement_tosca.py # orchestrator will need to pass inputs as arguments
               inputs: 
-                image_file: { get_input: [ SELF, app_image_file ] }
-                state_data: { get_input: [ SELF, app_state_data ] }
-                public_url: { get_input: [ SELF, app_public_url ] }
+                app_defn: { get_input: [ SELF, app_defn ] }
