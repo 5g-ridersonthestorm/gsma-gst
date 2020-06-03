@@ -124,7 +124,7 @@ topology_template:
       type : mec_type
       # directives: [ select ]
       # This node_filter is required but commented out awaiting a fix for puccini issue #34
-      # It ensures that the mecs picked by teh orchestrator for hosting the app are ones in the list of required addresses used to ID the MECs
+      # It ensures that the mecs picked by the orchestrator for hosting the app are ones in the list of required addresses used to ID the MECs
       # node_filter:
       #   capabilities:
       #     - host:
