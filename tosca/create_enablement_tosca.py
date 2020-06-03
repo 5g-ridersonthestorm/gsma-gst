@@ -3,7 +3,7 @@ import sys
 import os
 import json
 
-# command line for use: python create_enablement_tosca.py '{"app_image_file": "http://cloudrepo:80/files/wheresmychargepointapp.iso","app_state_data": "data_url.com","app_public_url": "wheresmychargepointapp.com"}'
+# command line for use: python create_enablement_tosca.py '{"app_image_file": "http://cloudrepo:80/files/wheresmychargepoint.iso","app_state_data": "data_url.com","app_public_url": "wheresmychargepoint.com"}'
 # command line for use: python create_enablement_tosca.py '{"app_image_file": "http://cloudrepo:80/files/test.iso","app_state_data": "data_url.com","app_public_url": "test.com"}'
 
 # get arguments and set to render

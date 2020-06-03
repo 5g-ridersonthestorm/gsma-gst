@@ -1,5 +1,5 @@
 tosca_definitions_version: tosca_simple_yaml_1_3
-description: A TOSCA template to deploy the app for wheresmychargingpoint.com on a MEC identified by its IP address supplied as an input and direct requests to it
+description: A TOSCA template to deploy the app for wheresmychargepoint.com on a MEC identified by its IP address supplied as an input and direct requests to it
 
 metadata:
   # The following fields are "normative" and expected in TOSCA 
@@ -7,7 +7,7 @@ metadata:
   template_author: paul.m.jordan@bt.com
   template_version: '1.0'
   # look for syntax error with the command below
-  parse_command: puccini-tosca parse "tosca/mec_hosting_enablement.wheresmychargingpoint.com.yml" -i targetComputeAdminAddress="10.10.10.10" > out.yml
+  parse_command: puccini-tosca parse "tosca/mec_hosting_enablement.wheresmychargepoint.com.yml" -i targetComputeAdminAddress="10.10.10.10" > out.yml
 
 capability_types:
   MECManager:
@@ -65,6 +65,8 @@ topology_template:
   inputs:
     targetComputeAdminAddress:
       type: string
+    public_app_address:
+      type: string
 
   node_templates:
     myApp:
@@ -91,8 +93,8 @@ topology_template:
       artifacts:
         mydeployment_file: 
           description: The actual install file for this app
-          file: http://cloudrepo:80/files/wheresmychargepointapp.iso # This will have been populated from a jinja2 field
-        data: http://livelocation.com/heresmychargepointapp/operationalstate.json # This will have been populated from a jinja2 field
+          file: http://cloudrepo:80/files/wheresmychargepoint.iso # This will have been populated from a jinja2 field
+        data: data_url.com # This will have been populated from a jinja2 field
 
     # Abstract node template (placeholder) to be selected by provider        
     myapp_compute:
@@ -118,7 +120,7 @@ topology_template:
                 # assume new address is public address of the mec but may have to be an input if a load balancer is used thus
                     # new_address: { get_attribute: [ myapp_compute, public_address ] }
                     # else just get it as an input
-                public_app_address: 1.1.1.1 # This will have been populated from a jinja2 field
+                public_app_address: { get_input: public_app_address }
 
   workflows:
     deploy:
