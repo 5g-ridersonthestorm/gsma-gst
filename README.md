@@ -1,11 +1,28 @@
 # gsma-gst
 Work on GSMA GSTs
 
+The Generic Network Slice Template (GST) is a set of attributes that can characterise a type of network slice/service. GST is generic and is not tied to any specific network deployment.
+The NEtwork Slice Type (NEST) is a GST filled with values. The values are assigned to express a given set of requirements to support a network slice customer use case. The NEST is an input to the network slice preparation performed by the Network Slice Provider (NSP). 
+
+
+Generic Network Slice Template
+Version 3.0
+22 May 2020
+https://www.gsma.com/newsroom/wp-content/uploads//NG.116-v3.0.pdf
+
+
+| Term                          | Description                                                                                                                                                                                 |
+|-------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Network Slice                 | A logical network that provides specific network capabilities and network characteristics                                                                                                |
+| Network Slice Instance        | A set of Network Function instances and the required resources (e.g. compute, storage and networking resources) which form a deployed Network Slice as defined in section 3.1 of         |
+| Network Slice Subnet          | A representation of the management aspects of a set of Managed Functions and the required resources (e.g. compute, storage and networking resources)                                   |
+| Network Slice Subnet Instance | An instance of Network Slice Subnet representing the management aspects of a set of Managed Function instances and the used resources (e.g. compute, storage and networking resources)  |
+| Service Continuity            | The uninterrupted user experience of a service, including the cases of IP address and/or anchoring point change                                                                   |
 <p align="center"><img src="https://github.com/5g-ridersonthestorm/gsma-gst/wiki/images/gsma-nest-thinking.png" /></p>
 
 This repository contains
 
-# Organization of the repository
+# Organization of this repository
 
 * gst: contains the generic slice template (template only, no slice details) 
 * s-nest: contains examples of the Standardized NESTs per industry vertical
