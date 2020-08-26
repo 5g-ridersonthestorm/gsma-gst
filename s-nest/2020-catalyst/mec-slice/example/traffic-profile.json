@@ -1,0 +1,8 @@
+{
+    "ActivityFactor": "0.1",
+    "DownlinkUserThroughput(Bps/Ue)": "100000",
+    "UplinkUserThroughput(Bps/Ue)": "100000",
+    "E2ELatency(Ms)": "3000",
+    "DownlinkTrafficDensity(Mbps/Ue/SqKm)": "0.0",
+    "UplinkTrafficDensity(Mbps/Ue/SqKm)": "0.0"
+}

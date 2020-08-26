@@ -1,0 +1,13 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "WHO",
+    "description": "WHO",
+    "type": "object",
+    "properties": {
+        "CustomerName/Reference": {
+            "description": "Customer name or reference",
+            "type": "string"
+        }
+    },
+    "required": []
+}

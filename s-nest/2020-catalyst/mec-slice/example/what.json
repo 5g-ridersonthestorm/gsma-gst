@@ -1,0 +1,8 @@
+{
+    "WhatsDrivingTheConnectivityRequirement?": "Collect wearable sensor data",
+    "UseCaseType": "Smart wearables ",
+    "Service/SliceType(Sst)": "mIOT",
+    "SliceDifferentiator": "example",
+    "NumberOfTerminals": "200000",
+    "NumberOfConnections": "200000"
+}

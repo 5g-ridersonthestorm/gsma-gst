@@ -1,0 +1,8 @@
+{
+    "LocationScope": "National",
+    "Location": "Germany",
+    "Area": "<geopolygon>",
+    "AreaSize(SqKm)": "357386",
+    "ConnectionDensity(Ue/SqKm)": "0.06",
+    "AvailableCellularFrequencyBands": "example"
+}

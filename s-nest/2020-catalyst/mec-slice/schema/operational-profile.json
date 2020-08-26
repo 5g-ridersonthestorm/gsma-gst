@@ -1,0 +1,25 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "OPERATIONAL PROFILE",
+    "description": "OPERATIONAL PROFILE",
+    "type": "object",
+    "properties": {
+        "PerformanceMonitoring": {
+            "description": "Unnecessary, current status of KPI and SLA metrics exposed in network slice API",
+            "type": "boolean"
+        },
+        "PerformancePrediction": {
+            "description": "Unnecessary, predicted values of KPI and SLA metrics exposed in network slice API",
+            "type": "string"
+        },
+        "UserManagementOpenness": {
+            "description": "Provides network slice customer with the ability to manage users, and their service requirements. ",
+            "type": "string"
+        },
+        "RootCauseInvestigation": {
+            "description": "This would entail opening up additional APIs and functions to nominated slice customer",
+            "type": "string"
+        }
+    },
+    "required": []
+}
