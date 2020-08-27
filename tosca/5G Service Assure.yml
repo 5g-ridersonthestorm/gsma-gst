@@ -6,6 +6,8 @@ metadata:
   template_name: 5G Service Assure
   template_author: paul.m.jordan@bt.com
   template_version: '5.0'
+  parse_command: puccini-tosca --quirk data_types.timestamp.permissive parse "tosca/5G Service Assure.yml" > out.txt
+  # the quirk in the above command tells puccini to allow timestamps in yaml format as used by sid.yml
 
 imports:
   # - file: https://github.com/pmjordan/TOSCA_for_TMForum/blob/master/sid.yml
