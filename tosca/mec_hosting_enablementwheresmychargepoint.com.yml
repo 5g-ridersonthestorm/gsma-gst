@@ -7,7 +7,17 @@ metadata:
   template_author: paul.m.jordan@bt.com
   template_version: '1.0'
   # look for syntax error with the command below
-  parse_command: puccini-tosca parse "tosca/mec_hosting_enablement.wheresmychargepoint.com.yml" -i targetComputeAdminAddress="10.10.10.10" > out.yml
+  parse_command: puccini-tosca parse "tosca/mec_hosting_enablementwheresmychargepoint.com.yml" -i targetComputeAdminAddress="10.10.10.10" -i public_app_address="1.1.1.1"> out.yml
+
+repositories:
+
+  deployment_repo:
+    url: http://cloudrepo.com:8080 # This will have been populated from a jinja2 field
+    credential:
+      user: username
+      token: token123
+      keys:
+        cert: cloudrepo.pem
 
 capability_types:
   MECManager:
@@ -93,20 +103,22 @@ topology_template:
       artifacts:
         mydeployment_file: 
           description: The actual install file for this app
-          file: http://cloudrepo:80/files/wheresmychargepoint.iso # This will have been populated from a jinja2 field
+          repository: deployment_repo
+          file: /files/wheresmychargepoint.iso # This will have been populated from a jinja2 field
+
         data: data_url.com # This will have been populated from a jinja2 field
 
     # Abstract node template (placeholder) to be selected by provider        
     myapp_compute:
       type : mec_type
-      # directives: [ select ]
-      # This node_filter is required but commented out awaiting a fix for puccini issue #34
+      directives: [ select ]
+      # This node_filter is required but commented out awaiting a fix for puccini issue #38
       # It ensures that the mecs picked by the orchestrator for hosting the app are ones in the list of required addresses used to ID the MECs
       # node_filter:
       #   capabilities:
       #     - host:
-      #         attributes:
-      #           - private_address: { in_range: {get_input: [ targetComputeAdminAddress ] }}
+      #         properties:
+      #           private_address: { in_range: {get_input: [ targetComputeAdminAddress ] }}
 
     mecs_controlling_smf:
       type: smf_type

@@ -31,8 +31,12 @@ topology_template:
             "description": "An app for possible deployment to a MEC",
             "type": "object",
             "properties": {
+                "app_image_repo": {
+                  "description": "URL of the repository which holds the deployment image",
+                  "type": "string"
+                },
                 "app_image_file": {
-                  "description": "URL, where to get the deployment image",
+                  "description": "path on the repo of the deployment image",
                   "type": "string"
                 },
                 "app_state_data": {
@@ -44,7 +48,7 @@ topology_template:
                   "type": "string"
                 }
             },
-            "required": ["app_image_file", "app_state_data", "app_public_url"]
+            "required": ["app_image_repo","app_image_file", "app_state_data", "app_public_url"]
           }
 
   node_templates:

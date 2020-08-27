@@ -1,6 +1,7 @@
 app_defn: >
           {
-          app_image_file: "http://cloudrepo:80/files/wheresmychargepointapp.iso",
+          app_image_repo: "http://cloudrepo.com:8080"
+          app_image_file: "/files/wheresmychargepointapp.iso",
           app_state_data: "data_url",
-          app_public_url: "wheresmychargepointapp/com"
+          app_public_url: "wheresmychargepointapp.com"
           }
