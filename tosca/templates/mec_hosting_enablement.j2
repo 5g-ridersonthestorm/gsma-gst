@@ -112,13 +112,13 @@ topology_template:
     myapp_compute:
       type : mec_type
       directives: [ select ]
-      # This node_filter is required but commented out awaiting a fix for puccini issue #38
-      # It ensures that the mecs picked by the orchestrator for hosting the app are ones in the list of required addresses used to ID the MECs
-      # node_filter:
-      #   capabilities:
-      #     - host:
-      #         properties:
-      #           private_address: { in_range: {get_input: [ targetComputeAdminAddress ] }}
+      # This node_filter ensures that the mecs picked by the orchestrator for hosting the app are ones in the list of required addresses used to ID the MECs
+      node_filter:
+        capabilities:
+          - host:
+              properties:
+                private_address: 
+                  - in_range: {get_input: [ targetComputeAdminAddress ] }
 
     mecs_controlling_smf:
       type: smf_type
