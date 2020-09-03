@@ -1,7 +1,7 @@
 {
-    "WhatsDrivingTheConnectivityRequirement?": "Collect wearable sensor data",
-    "UseCaseType": "Smart wearables ",
-    "Service/SliceType(Sst)": "mIOT",
+    "WhatsDrivingTheConnectivityRequirement?": "MEC Charging Point App",
+    "UseCaseType": "Application Hosting ",
+    "Service/SliceType(Sst)": "eMBB",
     "SliceDifferentiator": "example",
     "NumberOfTerminals": "200000",
     "NumberOfConnections": "200000"

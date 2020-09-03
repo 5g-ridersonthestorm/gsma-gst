@@ -1,6 +1,5 @@
 description: A TOSCA template to implement the connectivity service required between
-  an EV Charging Station and a Charging Station Management System as part of 5G Riders
-  on the Storm 2020 Catalyst for TMForum
+  an EV Charging Station and a Charging Station Management System as part of 5G Ride On! 2020 Catalyst for TMForum
 nodeTemplates:
   cs_csms_slice:
     description: ""
