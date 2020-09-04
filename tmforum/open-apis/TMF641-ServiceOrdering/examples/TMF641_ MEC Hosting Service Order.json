@@ -1,0 +1,43 @@
+{
+  "externalId": "BSS121",
+  "priority": "1",
+  "category": "service activation",
+  "@type": "activation",
+  "requestedStartDate": "2019-01-15T09:37:40.508Z",
+  "requestedCompletionDate": "2019-01-15T09:37:40.508Z",
+  "relatedParty": [
+    {
+      "id": "1294904",
+      "href": "http://host:port/customer/1294904",
+      "role": "owner",
+      "@referredType": "account"
+    }
+  ],
+  "orderItem": [
+    {
+      "id": "2",
+      "action": "add",
+      "service": {
+        "serviceState": "Active",
+        "serviceCharacteristic": [
+          {
+            "name": "Charging Station App",
+            "valueType": "object",
+            "value": {
+              "@type": "URI",
+              "URI": "https://apps.bt.com/cs/wheresmycharginstation.tar.gz",
+              "appURL":"https://www.wheresmychargingstation.com"
+            }
+          }
+        ],
+        "serviceSpecification": {
+          "id": "14",
+          "href": "http://...:serviceSpecification/14",
+          "name": "MEC Hosting",
+          "version": "1",
+          "@type": "Internet"
+        }
+      }
+    }
+  ]
+}

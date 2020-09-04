@@ -1,0 +1,65 @@
+{
+  "externalId": "BSS121",
+  "priority": "1",
+  "category": "service activation",
+  "@type": "activation",
+  "requestedStartDate": "2019-01-15T09:37:40.508Z",
+  "requestedCompletionDate": "2019-01-15T09:37:40.508Z",
+  "relatedParty": [
+    {
+      "id": "1294904",
+      "href": "http://host:port/customer/1294904",
+      "role": "owner",
+      "@referredType": "account"
+    }
+  ],
+  "orderItem": [
+    {
+      "id": "1",
+      "action": "add",
+      "service": {
+        "serviceState": "Active",
+        "serviceCharacteristic": [
+          {
+            "name": "CS1",
+            "valueType": "object",
+            "value": {
+              "fixed":{
+              "locationTag": "Luton-east", /*PE location, i.e. point of presence/pop or "serving exchange" is known at order time.*/
+              "geographicLocation":{},// CE location
+              ...
+              },
+              "Wireless":
+              {
+                "IMSI":"353838543921135",
+                ...
+              }
+            }
+          },
+          {
+            "name": "CS2",
+            "valueType": "object",
+            "value": {
+              "fixed":{
+              "locationtag": "Liverpool-north", /*point of presence/pop or "serving exchange" is known at order time.*/
+              "geographicLocation":{},
+              ...
+              },
+              "Wireless":
+              {
+                "IMSI":"353838543921136",
+                ...
+              }
+            }
+        ],
+        "serviceSpecification": {
+          "id": "12",
+          "href": "http://...:serviceSpecification/12",
+          "name": "Assured Connection",
+          "version": "1",
+          "@type": "Internet"
+        }
+      }
+    }
+  ]
+}
