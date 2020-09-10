@@ -93,7 +93,7 @@ topology_template:
       type: 5G_assure_connection
       # Every CS-CSMS connection requires an instance of a fixed connection and a wireless connection
       properties:
-        availability_SLO_modelling_option_1: '>=99.999%'
+        availability_SLO_modelling_option_1: '>99.999%'
         metricDefinition_for_availability_modelling_option_2: 
           name:
             "availability"
@@ -106,7 +106,16 @@ topology_template:
                 # so we measure in 1/100 000 ths
                 amount: 0.00001
                 # availability is a ratio and so has no units. User interface may choose to display it as a percentage
-                units: "None"
+                units: None
+              valueType: float
+              _metricDefinitionThresholdSet:
+                threshold_set1:
+                  thresholdType: LogicDefinition
+                  _metricDefMeasureThresholdRule:
+                  # the above which comes from the node definition points to a superclass but for this instance we want to use a child of that superclass ie MetricThresholdRuleDefinition the child of MetricDefMeasureThresholdRule
+                    rule1:
+                      conformanceTargetLower: 0.99999
+                      conformanceComparatorLower: LE
       requirements:
         - dependency: fixed_connection
           # could add additional node_filter to ensure the endpoints or other properties of the fixed connection  match those of my_CS_CSMS_connection

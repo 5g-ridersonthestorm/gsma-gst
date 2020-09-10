@@ -60,6 +60,23 @@ data_types:
         # Use of Null in SID is incompatible with the TOSCA definition of TimeStamp which we have adopted as a base data type and so Null cannot be used
         type: DateTime
 
+  Duration:
+    derived_from: Quantity
+    properties:
+      units:
+        constraints:
+          - valid_values:
+            - milliseconds
+            - seconds
+            - minutes
+            - hours
+            - days
+            - weeks
+            - months
+            - years
+
+
+
   ##################
   # data types to implement SID MetricABE
   ####################
@@ -71,9 +88,111 @@ data_types:
   # c) None of the values are available until run time.
   # TODO How can this be expanded to include thresholds and consequences which can be read at design time? May need TOSCA spec changes to do this cleanly
 
+  MetricThresholdComparator:
+    metadata:
+      source: org.tmforum.models.sidmodels.CommonDomain.MetricABE.MetricDefinitionMeasureABE.MetricDefinitionMeasureThresholdABE
+      sid_release: '19.0'
+    description: List of comparators that can be used to evaluate a value with an other such as equal, greater than, lower than...
+    derived_from: string
+    constraints:
+      - valid_values:
+        - EQ
+        - GE
+        - GT
+        - LE
+        - LT
+        - NEQ
+
+  MetricDefMeasureThresholdRule:
+    metadata:
+      source: org.tmforum.models.sidmodels.CommonDomain.MetricABE.MetricDefinitionMeasureABE.MetricDefinitionMeasureThresholdABE
+      sid_release: '19.0'
+    description: "A MetricDefMeasureThresholdRule is a rule that defines the condition (raise or clear) to achieve to apply consequences when a threshold (MetricDefMeasureThreshold) is crossed or ceased to be crossed. It also defines the severity of the raise or clear of the threshold."
+    properties:
+      name:
+        type: string
+        description: Name for the MetricDefMeasureThresholdRule .
+        required: false
+      description:
+        type: string
+        description: Description for the MetricDefMeasureThresholdRule .
+        required: false
+
+  
+
+  
+  MetricThresholdType:
+    metadata:
+      source: org.tmforum.models.sidmodels.CommonDomain.MetricABE.MetricDefinitionMeasureABE
+      sid_release: '19.0'
+    description: The Threshold Type may be either 'LogicDefinition' or 'PreDefined'.
+    derived_from: string
+    constraints:
+      - valid_values:
+        - LogicDefinition
+        - PreDefined
+  
+  MetricDefinitionThresholdSet:
+    metadata:
+      source: org.tmforum.models.sidmodels.CommonDomain.MetricABE.MetricDefinitionMeasureABE.MetricDefinitionMeasureThresholdABE
+      sid_release: '19.0'
+    description: "A MetricDefMeasureThresholdSet provides a way to group a set of one or more MetricDefMeasureThresholdRules specifying the condition to evaluate for applying consequences.
+A MetricDefMeasureThresholdSet is used to evaluate one or more MetricDefMesures.
+A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition instances or PreDefinedMetricThresholdRule instances."
+    properties:
+      ID:
+        description: A unique identifier for the MetricDefinition
+        type: string
+        required: false
+      name:
+        description: A word, term, or phrase by which a MetricDefinition is known and distinguished from other MetricDefinitions.
+        type: string
+        required: false
+      description:
+        type: string
+        required: false
+      thresholdType:
+        type: MetricThresholdType
+      # SID has a relation to a parent abstract superclass of MetricDefMeasureThresholdRule as below
+      # _metricDefMeasureThresholdRule:
+      #   metadata:
+      #     association: MetricDefMeasuredThresholdSetContains
+      #   type: map
+      #   entry_schema: MetricDefMeasureThresholdRule
+      # But TOSCA demands a direct link to the concrete subclasses of MetricThresholdRuleDefinition and PreDefinedMetricThresholdRule 
+      # It is hard to see how this could be converted form SID to YAML algorithmically. Note how the second map is added and renamed
+      _metricDefMeasureThresholdRule:
+        metadata:
+          association: MetricDefMeasuredThresholdSetContains
+        type: map
+        entry_schema: MetricThresholdRuleDefinition
+        required: false
+      _metricDefMeasureThresholdRule2:
+        metadata:
+          association: MetricDefMeasuredThresholdSetContains
+        type: map
+        entry_schema: PreDefinedMetricThresholdRule
+        required: false
+      
+
+
+  MetricValueType:
+    metadata:
+      source: org.tmforum.models.sidmodels.CommonDomain.MetricABE.MetricDefinitionMeasureABE
+      sid_release: '19.0'
+    description: The MetricValueType specifies the different possible type of values such as Int, String...
+    derived_from: string
+    constraints:
+      # SID has an enumeration which is modeled here in TOSCA as a constraint
+      # SID data type of double has to be mapped to YAML/TOSCA type of float
+      - valid_values:
+        - string
+        - integer
+        - float
+
   MetricDefinition:
     metadata:
-      source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.MetricABE.MetricDefinition
+      source: org.tmforum.models.sidmodels.CommonDomain.MetricABE.MetricDefinition
       sid_release: '19.0'
     description: A set of basic facts that defines, or specifies, what a metric is, such as its name, description, and so forth.
     properties:
@@ -101,10 +220,56 @@ data_types:
         type: map
         entry_schema: MetricDefMeasure
         required: false
+      
+
+  MetricThresholdRuleDefinition:
+      metadata:
+        source: org.tmforum.models.sidmodels.CommonDomain.MetricDefinitionMeasureABE.MetricDefinitionMeasureThresholdABE
+        sid_release: '19.0'
+      description: 'Various types of threshold logic can be implemented by this entity. For example: Indicator > Value.'
+      derived_from: MetricDefMeasureThresholdRule
+      properties:
+        conformanceTargetLower:
+          type: float
+          description: A value used to determine if the threshold is crossed or ceases to be crossed. It represents the Lower limit. The value should be less than the conformanceTargetUpper. The conformance comparators should also be logically defined so as to not lead to a logically impossible condition.
+          required: false
+        conformanceComparatorLower:
+          type: MetricThresholdComparator
+          description: "An operator that when applied on a value specifies whether a threshold is crossed or ceased to be crossed.
+          This operator is used to compare with the conformanceTargetLower."
+          required: false
+        conformanceTargetUpper:
+          type: float
+          description: A value used to determine if the threshold is crossed or ceases to be crossed. It represents the Upper limit. The value should be greater than the conformanceTargetLower. The conformance comparators should also be logically defined so as to not lead to a logically impossible condition.
+          required: false
+        conformanceComparatorUpper:
+          type: MetricThresholdComparator
+          description: "An operator that when applied on a value specifies whether a threshold is crossed or ceased to be crossed.
+          This operator is used to compare with the conformanceTargetUpper."
+          required: false
+        tolerancePeriod:
+          type: Duration
+          description: An interval of time of allowed crossing occurrences before a consequence being initiated.
+          required: false
+        numberOfAllowedCrossing:
+          type: integer
+          description: The number of allowed crossing occurrences in reference to the tolerancePeriod without a consequence being initiated.
+          required: false
+
+  PreDefinedMetricThresholdRule:
+      metadata:
+        source: org.tmforum.models.sidmodels.CommonDomain.MetricDefinitionMeasureABE.MetricDefinitionMeasureThresholdABE
+        sid_release: '19.0'
+      description: A pre-defined threshold is a "black-box" logic that resides in the PM Producing Application. A PM consuming application can execute it assigning values to its parameters.
+      derived_from: MetricDefMeasureThresholdRule
+      properties:
+        derivationAlgorithm:
+          type: string
+        
 
   MetricDefMeasure:
     metadata:
-      source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.MetricABE.MetricDefinitionABE.MetricDefMeasure
+      source: org.tmforum.models.sidmodels.CommonDomain.MetricABE.MetricDefinitionABE.MetricDefMeasure
       sid_release: '19.0'
     description: A MetricDefMeasure specifies a measure of a specific aspect of an entity, such as lost packets or dealer sales target achievement, defined for a MetricDefinition that may trigger consequence (s) (MetricDefMeasureConsequence) if a threshold (MetricDefMeasureThreshold) is crossed.
     properties:
@@ -119,6 +284,9 @@ data_types:
         description: The number of digits of accuracy captured for Metrics associated with a MetricDefMeasure.
         type: integer
         required: false
+      valueType: 
+        description: A kind of value that the Metric value associated with a MetricDefMeasure can take on, such as numeric, text, and so forth
+        type: MetricValueType
       capturePeriod:
         description: The period during which Metrics associated with a MetricDefMeasure are captured. Note This may be replaced by a set of entities similar to the Performance Monitoring ABEs.
         type: TimePeriod
@@ -133,14 +301,16 @@ data_types:
         description: The period for which the MetricDefMeasure is valid
         type: TimePeriod
         required: false
-      _metricMeasure:
-        type: list
-        entry_schema: MetricMeasure
+      _metricDefinitionThresholdSet:
+        metadata:
+          association: MetricDefMeasuredEvaluatedUsing
+        type: map
+        entry_schema: MetricDefinitionThresholdSet
         required: false
         
   MetricMeasure:
     metadata:
-      source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.MetricABE.MetricMeasureABE.MetricMeasure
+      source: org.tmforum.models.sidmodels.CommonDomain.MetricABE.MetricMeasureABE.MetricMeasure
       sid_release: '19.0'
     description: A numerical value or text determined for a MetricDefMeasure that may be collected for a RootEntity, such as a connection or a dealer. A MetricMeasure might be part of a group of MetricMeasures realized at a specific moment (MetricMeasureGroup). For example, a value of .005 ms that represents average packet delay
     properties:

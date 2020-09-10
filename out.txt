@@ -42,7 +42,7 @@ nodeTemplates:
               row: 96
               column: 9
               path: topology_template.node_templates["my_assured_connection"].properties["availability_SLO_modelling_option_1"]
-        $value: '>=99.999%'
+        $value: '>99.999%'
       metricDefinition_for_availability_modelling_option_2:
         $information:
           definition:
@@ -81,14 +81,64 @@ nodeTemplates:
                   $value: measure1
                 $map:
                   - $key:
-                      $value: unitOfMeasure
+                      $value: valueType
+                    $constraints:
+                      - $functionCall:
+                          name: tosca.constraint.valid_values
+                          arguments:
+                            - $value: string
+                            - $value: integer
+                            - $value: float
+                          url: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G Riders 2020\github_files\gsma-gst\tosca\5G Service Assure.yml
+                          row: 102
+                          column: 11
+                          path: topology_template.node_templates["my_assured_connection"].properties["metricDefinition_for_availability_modelling_option_2"]["_metricDefMeasure"]["&{0xc0003a2710 measure1 [] <nil> 0xc0002a4c00 true}"]["valueType"]
+                    $value: float
+                  - $key:
+                      $value: _metricDefinitionThresholdSet
                     $map:
                       - $key:
-                          $value: amount
-                        $value: 1e-05
-                      - $key:
-                          $value: units
-                        $value: None
+                          $value: threshold_set1
+                        $map:
+                          - $key:
+                              $value: thresholdType
+                            $constraints:
+                              - $functionCall:
+                                  name: tosca.constraint.valid_values
+                                  arguments:
+                                    - $value: LogicDefinition
+                                    - $value: PreDefined
+                                  url: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G Riders 2020\github_files\gsma-gst\tosca\5G Service Assure.yml
+                                  row: 102
+                                  column: 11
+                                  path: topology_template.node_templates["my_assured_connection"].properties["metricDefinition_for_availability_modelling_option_2"]["_metricDefMeasure"]["&{0xc0003a2710 measure1 [] <nil> 0xc0002a4c00 true}"]["_metricDefinitionThresholdSet"]["&{0xc0003a2738 threshold_set1 [] <nil> 0xc000118980 true}"]["thresholdType"]
+                            $value: LogicDefinition
+                          - $key:
+                              $value: _metricDefMeasureThresholdRule
+                            $map:
+                              - $key:
+                                  $value: rule1
+                                $map:
+                                  - $key:
+                                      $value: conformanceTargetLower
+                                    $value: 0.99999
+                                  - $key:
+                                      $value: conformanceComparatorLower
+                                    $constraints:
+                                      - $functionCall:
+                                          name: tosca.constraint.valid_values
+                                          arguments:
+                                            - $value: EQ
+                                            - $value: GE
+                                            - $value: GT
+                                            - $value: LE
+                                            - $value: LT
+                                            - $value: NEQ
+                                          url: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G Riders 2020\github_files\gsma-gst\tosca\5G Service Assure.yml
+                                          row: 102
+                                          column: 11
+                                          path: topology_template.node_templates["my_assured_connection"].properties["metricDefinition_for_availability_modelling_option_2"]["_metricDefMeasure"]["&{0xc0003a2710 measure1 [] <nil> 0xc0002a4c00 true}"]["_metricDefinitionThresholdSet"]["&{0xc0003a2738 threshold_set1 [] <nil> 0xc000118980 true}"]["_metricDefMeasureThresholdRule"]["&{0xc0003a2778 rule1 [] <nil> 0xc000581540 true}"]["conformanceComparatorLower"]
+                                    $value: LE
                   - $key:
                       $value: capturePeriod
                     $map:
@@ -124,6 +174,15 @@ nodeTemplates:
                           tzSign: +
                           tzHour: 0
                           tzMinute: 0
+                  - $key:
+                      $value: unitOfMeasure
+                    $map:
+                      - $key:
+                          $value: units
+                        $value: None
+                      - $key:
+                          $value: amount
+                        $value: 1e-05
     attributes: {}
     requirements:
       - name: dependency
@@ -1092,7 +1151,7 @@ nodeTemplates:
                     - $value: SELF
                     - $value: affected_connections_list
                   url: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G Riders 2020\github_files\gsma-gst\tosca\5G Service Assure.yml
-                  row: 138
+                  row: 147
                   column: 17
                   path: topology_template.node_templates["slice_for_5G_assure"].interfaces["5G_slice_management_interface"].operations["change_resource_allocation"].inputs["affected_connections_list"]
             timeout: -1
