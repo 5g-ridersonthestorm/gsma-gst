@@ -1,0 +1,572 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+####################
+data_types:
+####################
+
+  ##################
+  # data types to implement SID base types
+  ####################
+  ReportingPeriod:
+    # TOSCA 1.3 has a more powerful definition; scalar-unit.time 
+    derived_from: string
+    metadata:
+      source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.ReportingPeriod
+      sid_release: '19.0'
+    constraints:
+      - valid_values:
+        - NA:
+        - R_15MN:
+        - R_1H:
+        - R_1MN:
+        - R_24H:
+        - R_30MN:
+        - R_5MN:
+  
+  DateTime:
+    derived_from: timestamp
+    metadata:
+      source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.DateTime
+      sid_release: '19.0'
+    description: Attach the TOSCA and YAML definition for timestamp to the SID DataTime definition which has no canonical format definition 
+
+  Quantity:
+    derived_from: tosca.datatypes.Root
+    metadata:
+      source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.Quantity
+      sid_release: '19.0'
+    description: A base / value business entity used to represent measurements
+    properties: 
+      amount: 
+        description: A quantity of something, typically the total of a thing or things in number, size, value, extent, or money.
+        type: float
+      units:
+        description: The unit of measure for the quantity, such as meters, cubic yards, kilograms [ISO 80000], and the currency referring to [ISO 4217]
+        type: string
+
+  TimePeriod:
+    derived_from: tosca.datatypes.Root
+    metadata:
+      source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.TimePeriod
+      sid_release: '19.0'
+    description: A base / value business entity used to represent a period of time, between two timepoints
+    properties:
+      startDateTime:
+        description: An instant of time, starting at the TimePeriod Notes If null, then represents to the beginning of time
+        # Use of Null in SID is incompatible with the TOSCA definition of TimeStamp which we have adopted as a base data type and so Null cannot be used
+        type: DateTime
+      endDateTime:
+        description: An instant of time, ending  at the TimePeriod Notes If null, If null, then represents to the end of time
+        # Use of Null in SID is incompatible with the TOSCA definition of TimeStamp which we have adopted as a base data type and so Null cannot be used
+        type: DateTime
+
+  ##################
+  # data types to implement SID MetricABE
+  ####################
+
+  # MetricABE is represented as a data type schema not a node type because the orchestrator is not required to instantiate Metric ABE entities (as it is for resource entities)
+  # The disadvantages are that 
+  # a) the MetricABE relationships are reduced to a single complex schema so the associations can only be navigated a a single tree. Flattening the associations to create the tree is a decision made when creating sid.yml
+  # b) one the schema is used as an attribute everything inside it is a TOSCA attribute (and so read only) - may not be true consider how some SID attributes could eb properties and others attributes
+  # c) None of the values are available until run time.
+  # TODO How can this be expanded to include thresholds and consequences which can be read at design time? May need TOSCA spec changes to do this cleanly
+
+  MetricDefinition:
+    metadata:
+      source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.MetricABE.MetricDefinition
+      sid_release: '19.0'
+    description: A set of basic facts that defines, or specifies, what a metric is, such as its name, description, and so forth.
+    properties:
+      validFor:
+        description: The period of time for which the use of the MetricDefinition is applicable
+        type: TimePeriod
+        required: false
+      ID:
+        description: A unique identifier for the MetricDefinition
+        type: string
+        required: false
+      name:
+        description: A word, term, or phrase by which a MetricDefinition is known and distinguished from other MetricDefinitions.
+        type: string
+        required: false
+      description:
+        type: string
+        required: false
+      _metricDefMeasure:
+      # The SID definition for MetricDefinition contains a association to metricDefMeasure
+        # We can included the text of the association in meta data for readability is required
+        metadata:
+          association: MetricDefinitionMeasuredAccordingTo
+          # We can include the text of the association in meta data for readability is required
+        type: map
+        entry_schema: MetricDefMeasure
+        required: false
+
+  MetricDefMeasure:
+    metadata:
+      source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.MetricABE.MetricDefinitionABE.MetricDefMeasure
+      sid_release: '19.0'
+    description: A MetricDefMeasure specifies a measure of a specific aspect of an entity, such as lost packets or dealer sales target achievement, defined for a MetricDefinition that may trigger consequence (s) (MetricDefMeasureConsequence) if a threshold (MetricDefMeasureThreshold) is crossed.
+    properties:
+      # Add defaults so that a template with no metric values passes validation. Not ideal for metrics as not present is different to zero
+      unitOfMeasure:
+        description: The unit of measure for the Metric values associated with a MetricDefMeasure, such as meters, cubic yards, kilograms [ISO 1000]
+        type: Quantity
+        default:
+          amount: 0.0
+          units: unknown
+      accuracy:
+        description: The number of digits of accuracy captured for Metrics associated with a MetricDefMeasure.
+        type: integer
+        required: false
+      capturePeriod:
+        description: The period during which Metrics associated with a MetricDefMeasure are captured. Note This may be replaced by a set of entities similar to the Performance Monitoring ABEs.
+        type: TimePeriod
+        default:
+          startDateTime: 1970-1-1
+          endDateTime: 1970-1-1
+      captureFrequency:
+        description: The frequency of capture for the MetricDefMeasure. Note This may be replaced by a set of entities similar to the Performance Monitoring ABEs
+        type: string
+        required: false
+      validFor:
+        description: The period for which the MetricDefMeasure is valid
+        type: TimePeriod
+        required: false
+      _metricMeasure:
+        type: list
+        entry_schema: MetricMeasure
+        required: false
+        
+  MetricMeasure:
+    metadata:
+      source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.MetricABE.MetricMeasureABE.MetricMeasure
+      sid_release: '19.0'
+    description: A numerical value or text determined for a MetricDefMeasure that may be collected for a RootEntity, such as a connection or a dealer. A MetricMeasure might be part of a group of MetricMeasures realized at a specific moment (MetricMeasureGroup). For example, a value of .005 ms that represents average packet delay
+    properties:
+      value:
+        type: string
+
+####################
+capability_types:
+####################
+
+  ##################
+  # Capabilities to implement SID 
+  ####################
+        
+  tosca.capabilities.PhysicalResourceSpecAttributes:
+    description: >-
+      Equates to nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceSpecificationABE.PhysicalResourceSpecificationABE.PhysicalResourceSpecAttributes
+    # No need to use an inheritance tree for this as it contains no inherited attributes. No harm in doing so if it makes sense for automated mapping but for now derive from root
+    derived_from: tosca.capabilities.Root
+    metadata:
+      sid_release: '19.0'
+    properties:
+      modelNumber:
+        type: string 
+        required: True
+      vendorName:
+        type: string
+        required: True
+    attributes:
+      skuNumber:
+        type: string
+      partNumber:
+        type: string
+
+  tosca.capabilities.RootEntity:
+    description: >-
+      Equates to nodes.org.tmforum.models.sidmodels.CommonDomain.RootBusinessEntities:RootEntity
+    derived_from: tosca.capabilities.Root
+    properties:
+      description:
+        type: string
+        required: False
+        description: This is a string, and defines a textual identifier of an object
+      name:
+        type: string
+        description: Represents a user-friendly identifier of an object...
+        required: False
+      metric:
+        type: MetricMeasure
+      # Others to be added
+
+  tosca.capabilities.ResourceSpecificationABE:
+    description: >-
+      Equates to nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceSpecificationABE
+    derived_from: tosca.capabilities.RootEntity
+    properties:
+      validFor:
+        type: TimePeriod
+      # Others to be added 
+  
+  tosca.capabilities.LogicalResourceSpec:
+    description: >-
+      Equates to nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceSpecificationABE.LogicalResourceSpecificationABE
+    derived_from: tosca.capabilities.ResourceSpecificationABE
+      # There is a problem here as LogicalResourceSpec contains attributes of physicalResourceSpec and logicalResourceRole. If this was a node we could model these as capabilities but as this is already a capability we cannot use that trick
+      # ie. cannot nest capabilities and so we do not have a generic way to model in TOSCA the 1: 0..n relationships found in SID.
+
+
+  tosca.capabilities.ConnectionPointSpec:
+    description: >-
+      Equates to nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceSpecificationABE.LogicalResourceSpecificationABE.ConnectionPointSpec
+    # This does inherit attributes and so we do have to define the parent capabilities first
+    # TODO Inherit from RootEntity, EntitySpecification an ResourceSpecification instead of 
+    # some SID entities are mapped to TOSCA nodes and some to TOSCA capabilities and so there has to be a complete SID inheritance tree in both capability and node definitions
+    derived_from: tosca.capabilities.LogicalResourceSpec
+
+
+      
+####################
+interface_types:
+
+  tosca.interfaces.node.lifecycle.lrStatus:
+    #derived_from: tosca.interfaces.node
+    description: Provides TOSCA interface to org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.lrStatus
+    metadata:
+      sid_release: '19.0'
+    operations:
+      create:
+        description: '13: In Maintenance'
+      start:
+        description: '1: OK'
+      stop:
+        description: '6: Stopped'
+      delete:
+        description: '12: Not Installed or Not Present'
+
+      set_unknown:
+        description: '0: Unknown'
+
+      set_initializing:
+          description: '2: Initializing'
+      set_starting:
+          description: '3: Starting'
+      set_paused:
+          description: '4: Paused'
+      set_stopping:
+          description: '5: Stopping'
+
+      set_degraded:
+          description: '7: Degraded'
+      set_stressed:
+          description: '8: Stressed'
+      set_predicted_failure:
+          description: '9: Predicted Failure'
+      set_error_general:
+          description: '10: Error - General'
+      set_error_non_recoverable:
+          description: '11: Error - Non Recoverable'
+
+      set_unable_to_contact:
+          description: '14: Unable To Contact'
+      set_Lost_Communications:
+          description: '15: Lost Communications'
+
+
+  org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource.status:
+    #derived_from: tosca.interfaces.node.lifecycle.Standard
+    metadata:
+      source: org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource.status
+      sid_release: '19.0'
+    description: This is an enumerated integer whose value indicates the current status of the object
+    # Although all values from CompoundResource.status are included, only those which indicate a target resting state are likely to be used in a practical interface. 
+    # e.g. use the stop operation not the set_stopping operation
+    operations:
+      create:
+        description: '13: In Maintenance'
+      start:
+        description: '1: OK'
+      stop:
+        description: '6: Stopped'
+      delete:
+        description: '12: Not Installed or Not Present'
+        
+      set_unknown:
+        description: '0: Unknown'
+
+      set_initializing:
+          description: '2: Initializing'
+      set_starting:
+          description: '3: Starting'
+      set_paused:
+          description: '4: Paused'
+      set_stopping:
+          description: '5: Stopping'
+
+      set_degraded:
+          description: '7: Degraded'
+      set_stressed:
+          description: '8: Stressed'
+      set_predicted_failure:
+          description: '9: Predicted Failure'
+      set_error_general:
+          description: '10: Error - General'
+      set_error_non_recoverable:
+          description: '11: Error - Non Recoverable'
+
+      set_unable_to_contact:
+          description: '14: Unable To Contact'
+      set_Lost_Communications:
+          description: '15: Lost Communications'
+####################
+
+####################
+node_types:
+####################
+
+  ###################
+  # node types from SID model
+  ###################
+  
+  #tosca.nodes.tmforum:
+    #derived_from: tosca.nodes.Root
+
+  #tosca.nodes.org.tmforum.models:
+    #derived_from: tosca.nodes.tmforum
+  
+  nodes.org.tmforum.models.sidmodels:
+    metadata:
+      sid_release: '19.0'
+    properties:
+      # mapping examples of those attributes of SID RootEntity which are not relationships and are not read only to TOSCA properties
+      # JSON and therefore YAML and TOSCA does not have a syntax to declare that an attribute must be unique and so that (and
+      # possibly other) aspect of the SID definition is lost when mapping to TOSCA
+      description:
+        type: string
+        required: False
+        description: This is a string, and defines a textual identifier of an object
+      name:
+        type: string
+        description: Represents a user-friendly identifier of an object...
+        required: False
+      ID:
+        type: string
+        description: Unambiguously distinguishes different object instances
+        required: False
+    # attributes:
+    # If there were any SID read only attributes they would be mapped to TOSCA attributes here
+    # Include the caps and reqs behavior of tosca nodes. (we don't derive from tosca because we don't want to inherit the standard interface) 
+    capabilities:
+      feature: 
+        type: tosca.capabilities.Node
+    requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.Root
+          relationship: tosca.relationships.DependsOn
+          occurrences: [ 0, UNBOUNDED ]
+
+      
+  nodes.org.tmforum.models.sidmodels.ResourceDomain:
+    derived_from: nodes.org.tmforum.models.sidmodels
+    metadata:
+      sid_release: '19.0'
+    
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain
+    metadata:
+      sid_release: '19.0'
+    
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE
+    metadata:
+      sid_release: '19.0'
+    
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE
+    metadata:
+      sid_release: '19.0'
+    attributes:
+      status:
+        type: integer
+        description: "This is an enumerated integer whose value indicates the current status of the object. The following values are defined:
+          0: Unknown
+          1: OK
+          2: Initializing
+          3: Starting
+          4: Paused
+          5: Stopping
+          6: Stopped
+          7: Degraded
+          8: Stressed
+          9: Predicted Failure
+          10: Error - General
+          11: Error - Non Recoverable
+          12: Not Installed or Not Present
+          13: In Maintenance
+          14: Unable To Contact
+          15: Lost Communications
+
+          Stopped indicates that the CompoundResource is known to still exist, but it is no longer operational. However, it has not failed.
+
+          Stressed indicates that the LogicalResource is functioning, but needs attention (e.g., it may be overheating, or overloaded in some way). This is similar to Predicted Failure, which indicates that this CompoundResource is functioning properly, but is predicting a failure in the near future.
+
+          In Maintenance indicates that this LogicalResource is being configured, maintained, or otherwise administered and is NOT available for service"
+    interfaces:
+      Standard:
+        type: org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource.status
+
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE
+    metadata:
+      sid_release: '19.0'
+
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE
+    metadata:
+      sid_release: '19.0'
+    attributes:
+      lrStatus:
+        type: integer
+        description: "This is an enumerated integer whose value indicates the current status of the object. The following values are defined:
+        0: Unknown
+        1: OK
+        2: Initializing
+        3: Starting
+        4: Paused
+        5: Stopping
+        6: Stopped
+        7: Degraded
+        8: Stressed
+        9: Predicted Failure
+        10: Error - General
+        11: Error - Non Recoverable
+        12: Not Installed or Not Present
+        13: In Maintenance
+        14: Unable To Contact
+        15: Lost Communications
+
+        Stopped indicates that the LogicalResource is known to still exist, but it is no longer operational. However, it has not failed.
+
+        Stressed indicates that the LogicalResource is functioning, but needs attention (e.g., it may be overheating, or overloaded in some way). This is similar to Predicted Failure, which indicates that this LogicalResource is functioning properly, but is predicting a failure in the near future.
+
+        In Maintenance indicates that this LogicalResource is being configured, maintained, or otherwise administered and is NOT available for service.
+
+        Unable To Contact indicates that the monitoring system has knowledge of this LogicalResource but has never been able to establish communications with it. In contrast, Lost Communications indicates that the LogicalResource has been contacted successfully in the past and is known to still exist; however, it is currently unreachable."
+    interfaces:
+      Standard:
+        type: tosca.interfaces.node.lifecycle.lrStatus
+
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE
+    metadata:
+      sid_release: '19.0'
+    # capabilities:
+    #   connectionPointSpec:
+    #     type: tosca.capabilities.ConnectionPointSpec
+    #   connectionPointSpec2:
+    #     type: tosca.capabilities.ConnectionPointSpec
+
+    properties:
+      keyWords:
+        type: string
+        required: false
+        description: A list of key words that may help in searches to find an RF spec with desired capabilities
+
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ConnectionPoint:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE
+    metadata:
+      sid_release: '19.0'
+    
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource:
+    description: >-
+      Equates to PhysicalResourceSpec in TM Forum Information Model (SID)
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE
+    metadata:
+      sid_release: '19.0'
+    # In SID a PhysicalResourceSpec has a 1 : 0..1 relation to PhysicalResourceAttributes
+    # To model this in TOSCA we have these choices:
+    # 1 use capability
+      # We use this option but as noted elsewhere it can only be used for once - we cannot nest capabilities in node in capabilities in nodes and so cannot map one to many relations as found throughout SID
+    # 2 use requirements: - dependency: capability
+      # This places a requirement on node instances derived from this spec that they MUST instantiate a node with the capabilities defined in PhysicalResourceAttributes
+      # which is not what we want
+    # 3 use requirements: - dependency: node
+      # This places a requirement on node instances derived from this spec that they MUST instantiate a node with the type PhysicalResourceAttributes
+      # which is not what we want
+    # 4 Flatten the SID and add the attributes in this node
+      # this validates but
+        # loses the fact that if partNumber is present then vendorName must also be present 
+        # attributes: 
+        #   modelNumber:
+        #     type: string
+        #     required: false
+        #   vendorName:
+        #     type: string
+        #     required: true
+        #   skuNumber:
+        #     type: string
+        #     required: false
+        #   partNumber:
+        #     type: string
+        #   required: true
+    # 5 Make two node definitions, one with and one without the extension
+      # but that doubles the number of child entities
+    # 6 Use capability but to a new intermediate node type
+      # Does not seem to add anything helpful
+    capabilities:
+      PhysicalResourceSpecFurtherExtendedBy:
+        type: tosca.capabilities.PhysicalResourceSpecAttributes
+    
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource
+    metadata:
+      sid_release: '19.0'
+
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware
+    metadata:
+      sid_release: '19.0'
+    capabilities:
+      # SID does not define the linkable capability but all tosca ports are linkable
+      link:
+        type: tosca.capabilities.network.Linkable
+   
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware
+    metadata:
+      sid_release: '19.0'
+
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware
+    metadata:
+      sid_release: '19.0'
+
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
+    metadata:
+      sid_release: '19.0'
+
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
+    metadata:
+      sid_release: '19.0'
+
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
+    metadata:
+      sid_release: '19.0'
+
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.ComputingandSoftwareABE:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE
+    metadata:
+      sid_release: '19.0'
+
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.ComputingandSoftwareABE.SoftwareResourceandSoftwareABE:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.ComputingandSoftwareABE
+    metadata:
+      sid_release: '19.0'
+
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.ComputingandSoftwareABE.SoftwareResourceandSoftwareABE.InstalledSoftware:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.ComputingandSoftwareABE.SoftwareResourceandSoftwareABE
+    metadata:
+      sid_release: '19.0'
+    properties:
+      pagingFileSizeCurrent:
+        type: Quantity
+
+
+  

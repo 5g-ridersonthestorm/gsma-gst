@@ -10,9 +10,8 @@ metadata:
   # the quirk in the above command tells puccini to allow timestamps in yaml format as used by sid.yml
 
 imports:
-  # - file: https://github.com/pmjordan/TOSCA_for_TMForum/blob/master/sid.yml
   # would normally refer to external repository but for now make it local
-  - file: ../../../../TOSCA_for_TMForum/sid.yml
+  - file: tosca/sid.yml
   # The content is a TOSCA encoding of selected SID information model entities as explained in IG1176
     namespace_prefix: sid
   - file: tosca/5G.yml
@@ -32,6 +31,18 @@ node_types:
   5G_assure_connection:
     description: assured connection using combination of fixed and wireless
     derived_from: sid:nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction
+    properties:
+      availability_SLO_modelling_option_1:
+        type: string
+        description: The Service Level Objective for instances of this class. Modelled in TOSCA using a simple approach which disregards SID metrics
+        required: false
+        constraints:
+        - pattern: '[0-9]+\.[0-9]+%|[0-9]+%'
+      metricDefinition_for_availability_modelling_option_2:
+        type: sid:MetricDefinition
+        description: The Service Level Objective for instances of this class. Modelled in TOSCA using a datatype derived from SID. 
+        required: false
+
     capabilities:
       # There are always two external, user plane, interfaces
       a_end: Endpoint 
@@ -81,6 +92,21 @@ topology_template:
     my_assured_connection:
       type: 5G_assure_connection
       # Every CS-CSMS connection requires an instance of a fixed connection and a wireless connection
+      properties:
+        availability_SLO_modelling_option_1: '>=99.999%'
+        metricDefinition_for_availability_modelling_option_2: 
+          name:
+            "availability"
+          description:
+            "The MetricDefinition used to define the availability of this connection"
+          _metricDefMeasure:
+            # A map of metricDefMeasures associated with this metricDefinition
+            measure1:
+              unitOfMeasure:
+                # so we measure in 1/100 000 ths
+                amount: 0.00001
+                # availability is a ratio and so has no units. User interface may choose to display it as a percentage
+                units: "None"
       requirements:
         - dependency: fixed_connection
           # could add additional node_filter to ensure the endpoints or other properties of the fixed connection  match those of my_CS_CSMS_connection
