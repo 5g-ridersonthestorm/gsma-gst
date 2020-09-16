@@ -40,6 +40,7 @@ data_types:
       amount: 
         description: A quantity of something, typically the total of a thing or things in number, size, value, extent, or money.
         type: float
+        # Was incorrectly shown as in in IG1176 R19.0
       units:
         description: The unit of measure for the quantity, such as meters, cubic yards, kilograms [ISO 80000], and the currency referring to [ISO 4217]
         type: string
@@ -61,6 +62,7 @@ data_types:
         type: DateTime
 
   Duration:
+    # added since IG1176 R19.0
     derived_from: Quantity
     properties:
       units:
@@ -89,6 +91,7 @@ data_types:
   # TODO How can this be expanded to include thresholds and consequences which can be read at design time? May need TOSCA spec changes to do this cleanly
 
   MetricThresholdComparator:
+    # added since IG1176 R19.0
     metadata:
       source: org.tmforum.models.sidmodels.CommonDomain.MetricABE.MetricDefinitionMeasureABE.MetricDefinitionMeasureThresholdABE
       sid_release: '19.0'
@@ -104,6 +107,7 @@ data_types:
         - NEQ
 
   MetricDefMeasureThresholdRule:
+  # added since IG1176 R19.0
     metadata:
       source: org.tmforum.models.sidmodels.CommonDomain.MetricABE.MetricDefinitionMeasureABE.MetricDefinitionMeasureThresholdABE
       sid_release: '19.0'
@@ -122,6 +126,7 @@ data_types:
 
   
   MetricThresholdType:
+  # added since IG1176 R19.0
     metadata:
       source: org.tmforum.models.sidmodels.CommonDomain.MetricABE.MetricDefinitionMeasureABE
       sid_release: '19.0'
@@ -133,6 +138,7 @@ data_types:
         - PreDefined
   
   MetricDefinitionThresholdSet:
+  # added since IG1176 R19.0
     metadata:
       source: org.tmforum.models.sidmodels.CommonDomain.MetricABE.MetricDefinitionMeasureABE.MetricDefinitionMeasureThresholdABE
       sid_release: '19.0'
@@ -177,6 +183,7 @@ A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition ins
 
 
   MetricValueType:
+  # added since IG1176 R19.0
     metadata:
       source: org.tmforum.models.sidmodels.CommonDomain.MetricABE.MetricDefinitionMeasureABE
       sid_release: '19.0'
@@ -193,6 +200,7 @@ A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition ins
   MetricDefinition:
     metadata:
       source: org.tmforum.models.sidmodels.CommonDomain.MetricABE.MetricDefinition
+      # corrected since IG1176 R19.0
       sid_release: '19.0'
     description: A set of basic facts that defines, or specifies, what a metric is, such as its name, description, and so forth.
     properties:
@@ -218,6 +226,7 @@ A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition ins
           association: MetricDefinitionMeasuredAccordingTo
           # We can include the text of the association in meta data for readability is required
         type: map
+        # was list in IG1176 R19.0
         entry_schema: MetricDefMeasure
         required: false
       
@@ -279,12 +288,14 @@ A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition ins
         type: Quantity
         default:
           amount: 0.0
+          # was 0 in IG1176 
           units: unknown
       accuracy:
         description: The number of digits of accuracy captured for Metrics associated with a MetricDefMeasure.
         type: integer
         required: false
       valueType: 
+      # added since IG1176 R19.0
         description: A kind of value that the Metric value associated with a MetricDefMeasure can take on, such as numeric, text, and so forth
         type: MetricValueType
       capturePeriod:
@@ -302,6 +313,7 @@ A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition ins
         type: TimePeriod
         required: false
       _metricDefinitionThresholdSet:
+      # added since IG1176 R19.0
         metadata:
           association: MetricDefMeasuredEvaluatedUsing
         type: map
@@ -311,6 +323,7 @@ A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition ins
   MetricMeasure:
     metadata:
       source: org.tmforum.models.sidmodels.CommonDomain.MetricABE.MetricMeasureABE.MetricMeasure
+      # corrected since IG1176 R19.0
       sid_release: '19.0'
     description: A numerical value or text determined for a MetricDefMeasure that may be collected for a RootEntity, such as a connection or a dealer. A MetricMeasure might be part of a group of MetricMeasures realized at a specific moment (MetricMeasureGroup). For example, a value of .005 ms that represents average packet delay
     properties:

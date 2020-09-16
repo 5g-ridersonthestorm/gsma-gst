@@ -12,7 +12,7 @@ metadata:
 imports:
   # would normally refer to external repository but for now make it local
   - file: tosca/sid.yml
-  # The content is a TOSCA encoding of selected SID information model entities as explained in IG1176
+  # The content is a TOSCA encoding of selected SID information model entities as explained in IG1176 plus some small updates
     namespace_prefix: sid
   - file: tosca/5G.yml
     namespace_prefix: 5G
@@ -32,13 +32,7 @@ node_types:
     description: assured connection using combination of fixed and wireless
     derived_from: sid:nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction
     properties:
-      availability_SLO_modelling_option_1:
-        type: string
-        description: The Service Level Objective for instances of this class. Modelled in TOSCA using a simple approach which disregards SID metrics
-        required: false
-        constraints:
-        - pattern: '[0-9]+\.[0-9]+%|[0-9]+%'
-      metricDefinition_for_availability_modelling_option_2:
+      metricDefinition_for_availability:
         type: sid:MetricDefinition
         description: The Service Level Objective for instances of this class. Modelled in TOSCA using a datatype derived from SID. 
         required: false
@@ -93,8 +87,7 @@ topology_template:
       type: 5G_assure_connection
       # Every CS-CSMS connection requires an instance of a fixed connection and a wireless connection
       properties:
-        availability_SLO_modelling_option_1: '>99.999%'
-        metricDefinition_for_availability_modelling_option_2: 
+        metricDefinition_for_availability: 
           name:
             "availability"
           description:
@@ -114,7 +107,7 @@ topology_template:
                   _metricDefMeasureThresholdRule:
                   # the above which comes from the node definition points to a superclass but for this instance we want to use a child of that superclass ie MetricThresholdRuleDefinition the child of MetricDefMeasureThresholdRule
                     rule1:
-                      conformanceTargetLower: 0.99999
+                      conformanceTargetLower: 0.9999
                       conformanceComparatorLower: LE
       requirements:
         - dependency: fixed_connection
