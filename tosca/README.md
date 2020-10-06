@@ -11,4 +11,4 @@ There are two sets of files:
 
 ## MEC Hosting
 mec_hosting_set_up.yml is run when the service is first ordered. One of its functions is to dynamically create a TOSCA template ready for use when the MEC hosting is to be enabled. It does this by requiring a run of the program create_enablement_tosca.py. That python program takes the values originally submitted in mec_hosting_set_up_inputs.yml and uses them to render the jinja2 template mec_hosting_enablement.j2
-mec_hosting_enablementwheresmychargepoint.com.yml is an example of such a dynamically created template. 
+An example of such a dyanmically created template is mec_hosting_enablementwheresmychargepoint.com.yml

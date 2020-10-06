@@ -80,8 +80,6 @@ policy_types:
       - 5G:5G_slice
 
 topology_template:
-
-
   node_templates:
     my_assured_connection:
       type: 5G_assure_connection
