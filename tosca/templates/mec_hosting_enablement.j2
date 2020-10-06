@@ -1,5 +1,5 @@
 tosca_definitions_version: tosca_simple_yaml_1_3
-description: A TOSCA template to deploy a specific app on a mec and direct requests to it
+description: A TOSCA template to deploy the app for {{ app_public_url }} on a MEC identified by its IP address supplied as an input and direct requests to it
 
 metadata:
   # The following fields are "normative" and expected in TOSCA 
@@ -7,11 +7,17 @@ metadata:
   template_author: paul.m.jordan@bt.com
   template_version: '1.0'
   # look for syntax error with the command below
-  parse_command: puccini-tosca parse "tosca/assured_hosting.yml" -i targetComputeAdminAddress="10.10.10.10" -i public_app_address="1.1.1.1"> out.yml
+  parse_command: puccini-tosca parse "tosca/mec_hosting_enablementwheresmychargepoint.com.yml" -i targetComputeAdminAddress="10.10.10.10" -i public_app_address="1.1.1.1"> out.yml
 
-imports:
-  # This file makes this generic template become specific to a particular app
-  - file: wheresmychargepoint.yml
+repositories:
+
+  deployment_repo:
+    url: {{ app_image_repo }} # This will have been populated from a jinja2 field
+    credential:
+      user: username
+      token: token123
+      keys:
+        cert: cloudrepo.pem
 
 capability_types:
   MECManager:
@@ -32,6 +38,9 @@ interface_types:
 node_types:
   hosted_app_type:
     derived_from: tosca.nodes.SoftwareComponent
+    requirements:
+      - host:
+          occurrences: [ 1, UNBOUNDED ]
     interfaces:
       Standard:
         operations:
@@ -72,8 +81,8 @@ topology_template:
   node_templates:
     myApp:
       # as this is a classic VNF we have a choice of how to model it. Could be based on TOSCA node types, SID software entities or ETSI VNFs. Depends on what is easiest for the orchestrator vendor. 
-      # Initially we tried to use TOSCA native but in this scenario the create artefact URL and the URL of the repository on which it is store both need to be passed in as inputs but TOSCA does not allow these to be paramterized.
-      # We have therefore chosen SID to model the repository
+      # We have therefore chosen TOSCA native but the downside is that the create artefact URL and the URL of the repository on which it is store both need to be passed in as inputs but TOSCA does not allow these to be paramterized.
+      # The work around is to move these parts to an external file so that only one line in this generic template needs to be edited.
       type: hosted_app_type #tosca.nodes.SoftwareComponent
       interfaces:
         Standard:
@@ -86,25 +95,30 @@ topology_template:
               implementation: scripts/configure.sh
               inputs: 
                 sync_data: { get_artifact: [ SELF, data ] }
+      requirements:
+        # SoftwareComponent requires hosting on Compute by definition but supplement that requirement for an abstract node
+        - host: 
+            node: myapp_compute
+
       artifacts:
         mydeployment_file: 
           description: The actual install file for this app
-          file: http://cloudrepo:80/files/wheresmychargepointapp.iso
-        data: http://livelocation.com/heresmychargepointapp/operationalstate.json
-      requirements:
-        # SoftwareComponent requires hosting on Compute by definition but supplement that requirement for an abstract node
-        - host: myapp_compute
+          repository: deployment_repo
+          file: {{ app_image_file }} # This will have been populated from a jinja2 field
+
+        data: {{ app_state_data }} # This will have been populated from a jinja2 field
 
     # Abstract node template (placeholder) to be selected by provider        
     myapp_compute:
       type : mec_type
-      # directives: [ select ]
-      # This node_filter is required by commented out awaiting a fix for puccini issue #34
-      # node_filter:
-      #   capabilities:
-      #     - host:
-      #         attributes:
-      #           - private_address: { equal: {get_input: [ targetComputeAdminAddress ] }}
+      directives: [ select ]
+      # This node_filter ensures that the mecs picked by the orchestrator for hosting the app are ones in the list of required addresses used to ID the MECs
+      node_filter:
+        capabilities:
+          - host:
+              properties:
+                private_address: 
+                  - in_range: {get_input: [ targetComputeAdminAddress ] }
 
     mecs_controlling_smf:
       type: smf_type
@@ -114,10 +128,10 @@ topology_template:
           operations:
             redirect:
               inputs:
-                app_url: { get_input: app_url }
-                # assume new address is public address of the mec but may have to be an input if a load balancer is used
-                # new_address: { get_attribute: [ myapp_compute, public_address ] }
-                # else just get it as an input
+                app_url: {{ app_public_url }} # This will have been populated from a jinja2 field
+                # assume new address is public address of the mec but may have to be an input if a load balancer is used thus
+                    # new_address: { get_attribute: [ myapp_compute, public_address ] }
+                    # else just get it as an input
                 public_app_address: { get_input: public_app_address }
 
   workflows:

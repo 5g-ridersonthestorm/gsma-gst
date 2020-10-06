@@ -6,12 +6,13 @@ metadata:
   template_name: 5G Service Assure
   template_author: paul.m.jordan@bt.com
   template_version: '5.0'
+  parse_command: puccini-tosca --quirk data_types.timestamp.permissive parse "tosca/5G Service Assure.yml" > out.txt
+  # the quirk in the above command tells puccini to allow timestamps in yaml format as used by sid.yml
 
 imports:
-  # - file: https://github.com/pmjordan/TOSCA_for_TMForum/blob/master/sid.yml
   # would normally refer to external repository but for now make it local
-  - file: ../../../../TOSCA_for_TMForum/sid.yml
-  # The content is a TOSCA encoding of selected SID information model entities as explained in IG1176
+  - file: tosca/sid.yml
+  # The content is a TOSCA encoding of selected SID information model entities as explained in IG1176 plus some small updates
     namespace_prefix: sid
   - file: tosca/5G.yml
     namespace_prefix: 5G
@@ -30,6 +31,12 @@ node_types:
   5G_assure_connection:
     description: assured connection using combination of fixed and wireless
     derived_from: sid:nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction
+    properties:
+      metricDefinition_for_availability:
+        type: sid:MetricDefinition
+        description: The Service Level Objective for instances of this class. Modelled in TOSCA using a datatype derived from SID. 
+        required: false
+
     capabilities:
       # There are always two external, user plane, interfaces
       a_end: Endpoint 
@@ -73,12 +80,33 @@ policy_types:
       - 5G:5G_slice
 
 topology_template:
-
-
   node_templates:
     my_assured_connection:
       type: 5G_assure_connection
       # Every CS-CSMS connection requires an instance of a fixed connection and a wireless connection
+      properties:
+        metricDefinition_for_availability: 
+          name:
+            "availability"
+          description:
+            "The MetricDefinition used to define the availability of this connection"
+          _metricDefMeasure:
+            # A map of metricDefMeasures associated with this metricDefinition
+            measure1:
+              unitOfMeasure:
+                # so we measure in 1/100 000 ths
+                amount: 0.00001
+                # availability is a ratio and so has no units. User interface may choose to display it as a percentage
+                units: None
+              valueType: float
+              _metricDefinitionThresholdSet:
+                threshold_set1:
+                  thresholdType: LogicDefinition
+                  _metricDefMeasureThresholdRule:
+                  # the above which comes from the node definition points to a superclass but for this instance we want to use a child of that superclass ie MetricThresholdRuleDefinition the child of MetricDefMeasureThresholdRule
+                    rule1:
+                      conformanceTargetLower: 0.9999
+                      conformanceComparatorLower: LE
       requirements:
         - dependency: fixed_connection
           # could add additional node_filter to ensure the endpoints or other properties of the fixed connection  match those of my_CS_CSMS_connection

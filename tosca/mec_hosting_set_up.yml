@@ -1,0 +1,97 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+description: A TOSCA template to prepare for a later deployment of a specific app on a mec
+
+metadata:
+  # The following fields are "normative" and expected in TOSCA 
+  template_name: generic_app
+  template_author: paul.m.jordan@bt.com
+  template_version: '1.0'
+  # look for syntax error with the command below
+  parse_command: puccini-tosca --quirk data_types.timestamp.permissive parse "tosca/mec_hosting_set_up.yml" -n tosca/mec_hosting_set_up_inputs.yml
+
+imports:
+  # would normally refer to external repository but for now make it local
+  - file: tosca/sid.yml
+  # The content is a TOSCA encoding of selected SID information model entities as explained in IG1176 plus some small updates
+    namespace_prefix: sid
+
+node_types:
+  hosted_app_type:
+    derived_from: tosca.nodes.SoftwareComponent
+    properties:
+      metricDefinition_for_availability:
+        type: sid:MetricDefinition
+        description: The Service Level Objective for instances of this class. Modelled in TOSCA using a datatype derived from SID. 
+        required: false
+    interfaces:
+      Standard:
+        operations:
+          create:
+            inputs:
+              app_defn:
+                type: json
+
+topology_template:
+  inputs:
+    app_defn:
+      type: json
+      constraints:
+        - schema: {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "title": "app data",
+            "description": "An app for possible deployment to a MEC",
+            "type": "object",
+            "properties": {
+                "app_image_repo": {
+                  "description": "URL of the repository which holds the deployment image",
+                  "type": "string"
+                },
+                "app_image_file": {
+                  "description": "path on the repo of the deployment image",
+                  "type": "string"
+                },
+                "app_state_data": {
+                  "description": "URL, where to get any state data",
+                  "type": "string"
+                },
+                "app_public_url": {
+                  "description": "The url the public use to get to the app",
+                  "type": "string"
+                }
+            },
+            "required": ["app_image_repo","app_image_file", "app_state_data", "app_public_url"]
+          }
+
+  node_templates:
+    myApp:
+      type: hosted_app_type #tosca.nodes.SoftwareComponent
+      properties:
+        metricDefinition_for_availability: 
+          name:
+            "availability"
+          description:
+            "The MetricDefinition used to define the availability of this connection"
+          _metricDefMeasure:
+            # A map of metricDefMeasures associated with this metricDefinition
+            measure1:
+              unitOfMeasure:
+                # so we measure in 1/100 000 ths
+                amount: 0.00001
+                # availability is a ratio and so has no units. User interface may choose to display it as a percentage
+                units: None
+              valueType: float
+              _metricDefinitionThresholdSet:
+                threshold_set1:
+                  thresholdType: LogicDefinition
+                  _metricDefMeasureThresholdRule:
+                  # the above which comes from the node definition points to a superclass but for this instance we want to use a child of that superclass ie MetricThresholdRuleDefinition the child of MetricDefMeasureThresholdRule
+                    rule1:
+                      conformanceTargetLower: 0.99999
+                      conformanceComparatorLower: LE
+      interfaces:
+        Standard:
+          operations:
+            create:
+              implementation: create_enablement_tosca.py # orchestrator will need to pass inputs as arguments
+              inputs: 
+                app_defn: { get_input: [ SELF, app_defn ] }

@@ -73,5 +73,5 @@ data_types:
   
   # Approach 4 is to modify the content of gst/json-schema so that each row of the GST has its own JSON schema and then use approach 1 or 2 on that. 
   # The GST JSON schema could still also have schemas for the groups as well
-  # No example i shown as this is more work, requires changes outside TOSCA and has no advantage over approach 3.
+  # No example is shown as this is more work, requires changes outside TOSCA and has no advantage over approach 3.
   
