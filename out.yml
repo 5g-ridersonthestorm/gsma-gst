@@ -379,9 +379,9 @@ nodeTemplates:
         description: The actual install file for this app
         types: {}
         properties: {}
-        filename: wheresmychargepointapp.iso
+        filename: WheresMyChargePoint_w1-wip1.csar
         sourcePath: file:C:\Users\802052047\OneDrive - BT Plc\Documents\MDM\TOSCA\5G
-          Riders 2020\github_files\gsma-gst\tosca\http:\cloudrepo:80\files\wheresmychargepointapp.iso
+          Riders 2020\github_files\gsma-gst\tosca\http:\cloudrepo:80\files\
         targetPath: ""
         version: ""
         checksumAlgorithm: ""
