@@ -104,7 +104,7 @@ topology_template:
         mydeployment_file: 
           description: The actual install file for this app
           repository: deployment_repo
-          file: /files/wheresmychargepoint.iso # This will have been populated from a jinja2 field
+          file: /files/WheresMyChargepoint_w1-wip1.csar # This will have been populated from a jinja2 field
 
         data: data_url.com # This will have been populated from a jinja2 field
 
