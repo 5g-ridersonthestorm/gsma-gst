@@ -14,14 +14,14 @@ data_types:
       source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.ReportingPeriod
       sid_release: '19.0'
     constraints:
-      - valid_values:
-        - NA:
-        - R_15MN:
-        - R_1H:
-        - R_1MN:
-        - R_24H:
-        - R_30MN:
-        - R_5MN:
+      - valid_values
+        - NA
+        - R_15MN
+        - R_1H
+        - R_1MN
+        - R_24H
+        - R_30MN
+        - R_5MN
   
   DateTime:
     derived_from: timestamp
