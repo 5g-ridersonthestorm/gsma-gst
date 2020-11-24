@@ -70,12 +70,12 @@ topology_template:
           name:
             "availability"
           description:
-            "The MetricDefinition used to define the availability of this connection"
+            "The MetricDefinition used to define the availability of this hosting service"
           _metricDefMeasure:
             # A map of metricDefMeasures associated with this metricDefinition
             measure1:
               unitOfMeasure:
-                # so we measure in 1/100 000 ths
+                # we measure in 1/100 000 ths
                 amount: 0.00001
                 # availability is a ratio and so has no units. User interface may choose to display it as a percentage
                 units: None
